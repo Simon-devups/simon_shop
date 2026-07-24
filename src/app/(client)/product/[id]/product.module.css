@@ -1,0 +1,391 @@
+/* ============================================
+   فایل استایل ماژول محصول (Product.module.css)
+   فقط مختص کامپوننت Product
+   ============================================ */
+
+.productSelfCont {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.productSelfCont__title {
+  display: -webkit-inline-box;
+  overflow: hidden;
+  max-width: 360px;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  direction: rtl;
+}
+
+.productSelfCont__flow {
+  display: flex;
+  color: #81858b;
+  font-weight: 500;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  font-weight: 400;
+  font-size: 12px;
+}
+
+/* ---------- بخش چپ (اطلاعات) ---------- */
+.leftDOWN {
+  overflow-y: auto;
+  direction: rtl;
+  display: grid;
+  grid-template-columns: minmax(300px, auto) minmax(300px, 345px);
+  grid-template-rows: auto 0fr auto 1fr;
+  grid-template-areas:
+    "variant-info buy-box"
+    "fidibo-audio-preview buy-box"
+    "spec buy-box"
+    "touchPoints buy-box";
+}
+
+.leftDOWN__variant {
+  grid-area: variant-info;
+}
+
+.leftDOWN__properties {
+  grid-area: spec;
+  border-top: 1px solid #e0e0e2;
+}
+
+.leftDOWN__circles {
+  display: flex;
+  margin-bottom: 16px;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.furushContCard {
+  grid-area: buy-box;
+  height: 100%;
+}
+
+.productCont {
+  display: flex;
+}
+
+.leftUP > h1 {
+  font-size: 19px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* ---------- بخش راست (تصاویر) ---------- */
+.right {
+  width: 36%;
+  margin-left: 16px;
+}
+
+.right__productImgCont {
+  margin-left: 10px;
+}
+
+.right__lilCont {
+  display: flex;
+  width: 100%;
+  gap: 8px;
+  direction: rtl;
+  justify-content: space-evenly;
+}
+
+.right__lilCont--littleImgCont {
+  height: 82px;
+  width: 82px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
+}
+
+.right__lilCont--littleImgCont > img {
+  width: 100%;
+}
+
+/* ---------- انتخاب رنگ ---------- */
+.rangCont {
+  display: flex;
+}
+
+.circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.circleCont {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #c2c3c7;
+}
+
+/* ---------- ویژگی‌ها ---------- */
+.propertiesGrid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.downProperty {
+  color: #23254e;
+  display: -webkit-box;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.alert {
+  color: #81858b;
+}
+
+.hrWithText {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.hrWithText hr {
+  flex: 1;
+  border: none;
+  height: 1px;
+  background: #e0e0e2;
+}
+
+.hrWithText button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e2;
+  background: white;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.box {
+  padding: 8px;
+  border-radius: 8px;
+  background-color: #f0f0f1;
+}
+
+/* ---------- کارت خرید ---------- */
+.card {
+  background: linear-gradient(0deg, hsla(240, 3%, 94%, 0.5), hsla(240, 3%, 94%, 0.5)), #fff;
+  border: 1px solid #e0e0e2;
+  border-radius: 8px;
+}
+
+.furushInner {
+  row-gap: 8px;
+  margin-right: 12px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 180px;
+}
+
+.furushande {
+  padding: 16px 20px 8px 20px;
+}
+
+.digi {
+  width: 100%;
+  padding-top: 16px;
+  padding-bottom: 32px;
+  padding-right: 8px;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  border-bottom: #e0e0e2 1px solid;
+}
+
+/* ---------- قیمت و انیمیشن ---------- */
+.price {
+  width: 100%;
+  padding: 0 16px;
+}
+
+.price--prevPriceInner {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+  margin-right: auto;
+}
+
+.price__PrevThenNow {
+  display: flex;
+  align-items: center;
+}
+
+.price__innerPrice {
+  padding-top: 16px;
+}
+
+.price__animator {
+  height: 26px;
+  overflow: hidden;
+  position: relative;
+}
+
+.price__animator--track {
+  display: flex;
+  flex-direction: column;
+  animation: slide 8s cubic-bezier(0.25, 0.6, 0.1, 1) infinite;
+}
+
+.price__animator--track-item {
+  height: 26px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #5A52D9;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.price__animator--track-item > img {
+  width: 18px;
+  height: 18px;
+}
+
+.prevPriceColCont {
+  display: flex;
+  direction: ltr;
+}
+
+.prevPriceColCont > div {
+  margin-left: 4px;
+  font-weight: 700;
+  text-decoration: line-through;
+  color: #81858b;
+}
+
+.prevPriceColCont > span {
+  margin-right: 4px;
+  margin-left: 4px;
+  background-color: #6C63FF;
+  color: white;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 0 8px;
+  border-radius: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ---------- انیمیشن اسلاید مخصوص قیمت ---------- */
+@keyframes slide {
+  0% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-26px);
+  }
+  50% {
+    transform: translateY(-52px);
+  }
+  75% {
+    transform: translateY(-78px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+
+/* ============================================
+   پچ ریسپانسیو - اضافه کن به انتهای product.module.css
+   ============================================ */
+
+/* تبلت و صفحات متوسط (زیر 1000px) */
+@media (max-width: 1000px) {
+  .productCont {
+    flex-direction: column;
+  }
+
+  .right {
+    width: 100%;
+    margin-left: 0;
+    margin-bottom: 16px;
+  }
+
+  .right__productImgCont {
+    margin-left: 0;
+    max-height: 350px;
+  }
+  .right__productImgCont > img{
+    height: 100%;
+    width: 100%;
+    max-height: 350px;
+    object-fit: contain;
+  }
+
+  .leftDOWN {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:
+      "variant-info"
+      "fidibo-audio-preview"
+      "buy-box"
+      "spec"
+      "touchPoints";
+  }
+
+  .furushInner {
+    position: static;
+    margin-right: 0;
+  }
+
+  .propertiesGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* موبایل (زیر 640px) */
+@media (max-width: 640px) {
+  .productSelfCont {
+    padding: 0 8px;
+  }
+
+  .right__lilCont--littleImgCont {
+    height: 64px;
+    width: 64px;
+  }
+
+  .leftUP > h1 {
+    font-size: 16px;
+  }
+
+  .propertiesGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hrWithText button {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .price__PrevThenNow {
+    flex-wrap: wrap;
+  }
+
+  .price--prevPriceInner {
+    align-items: flex-start;
+  }
+}
