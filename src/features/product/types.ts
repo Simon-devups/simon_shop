@@ -1,8 +1,7 @@
 import { Prisma } from "@prisma/client";
 
 
-export type ProductWithRelations =
-  Prisma.ProductGetPayload<{
+export type ProductCardType = Prisma.ProductGetPayload<{
     include:{
       brand:true;
       category:true;
@@ -16,3 +15,5 @@ export type ProductWithRelations =
       variants:true;
     }
   }>;
+
+export type CreateProductType = Prisma.ProductGetPayload<{}>
