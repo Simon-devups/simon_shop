@@ -1,5 +1,4 @@
 import { ProductCard } from "@/features/product/components/ProductCard";
-import "../../../../public/style.css"
 
 export default function ProductsPage({
   searchParams,
@@ -13,7 +12,7 @@ export default function ProductsPage({
 }){
     return(
         <main>
-            <ProductCard/>
+            {/* <ProductCard/> */}
         </main>
     )
 }

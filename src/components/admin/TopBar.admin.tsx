@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
+import { useTheme } from "@/components/admin/ThemeProvider";
 import {
   Search,
   Bell,
@@ -27,6 +28,7 @@ const pageNames: Record<string, string> = {
 };
 
 export default function Topbar() {
+  const { isDark, toggleTheme } = useTheme();
   const pathname = usePathname();
 
   const breadcrumbs = useMemo(() => {
@@ -40,6 +42,7 @@ export default function Topbar() {
       label: pageNames[item] ?? item,
     }));
   }, [pathname]);
+
 
   return (
     <header className="topbar">
@@ -92,18 +95,11 @@ export default function Topbar() {
           <span className="kbd">⌘ K</span>
         </div>
 
-        <div
-          className="theme-toggle"
-          role="group"
-        >
-          <button
-            className="active"
-            title="روشن"
-          >
+        <div className="theme-toggle" role="group" aria-label="تم">
+          <button className={!isDark ? "active" : ""} title="روشن" onClick={() => isDark && toggleTheme()}>
             <Sun size={15} />
           </button>
-
-          <button title="تاریک">
+          <button className={isDark ? "active" : ""} title="تاریک" onClick={() => !isDark && toggleTheme()}>
             <Moon size={15} />
           </button>
         </div>
