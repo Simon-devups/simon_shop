@@ -1,3 +1,4 @@
+import { Role } from "@prisma/client";
 import type { LucideIcon } from "lucide-react";
 
 /* ===================== عمومی (Shared / UI) ===================== */
@@ -209,12 +210,20 @@ export interface Payment {
 export type AdminStatus = "active" | "inactive";
 
 export interface Admin {
+  id:string
   name: string;
   email: string;
-  role: string;
-  status: AdminStatus;
-  last: string;
-  avatar: string;
+  role: Role;
+  isActive:boolean;
+  activeTime:Date;
+}
+
+export interface UpdateAdminType{
+  id:string;
+  name?: string;
+  email?: string;
+  role?: Role;
+  isActive?:boolean;
 }
 
 /* ===================== تحلیل و گزارشات (Analytics) ===================== */

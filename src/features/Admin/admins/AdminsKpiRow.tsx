@@ -3,7 +3,7 @@ import KpiCard from "@/components/ui/KpiCard";
 import type { Admin } from "@/constants/types";
 
 export default function AdminsKpiRow({ admins }: { admins: Admin[] }) {
-  const active = admins.filter((a) => a.status === "active").length;
+  const active = admins.filter((a) => a.isActive === true).length;
   const inactive = admins.length - active;
 
   return (

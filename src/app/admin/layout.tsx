@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Vazirmatn } from "next/font/google";
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
+import ThemeProvider from "@/components/admin/ThemeProvider";
 import "./globals.css";
 
 const vazirmatn = Vazirmatn({
@@ -18,15 +19,33 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fa" dir="rtl">
+    <html lang="fa" dir="rtl" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('theme');
+                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  var isDark = saved ? saved === 'dark' : prefersDark;
+                  if (isDark) document.documentElement.classList.add('dark');
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className={vazirmatn.variable}>
-        <div className="app-shell">
-          <Sidebar />
-          <div className="main">
-            <Topbar />
-            <main className="page">{children}</main>
+        <ThemeProvider>
+          <div className="app-shell">
+            <Sidebar />
+            <div className="main">
+              <Topbar />
+              <main className="page">{children}</main>
+            </div>
           </div>
-        </div>
+        </ThemeProvider>
       </body>
     </html>
   );

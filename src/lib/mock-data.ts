@@ -152,13 +152,13 @@ export const payments: Payment[] = [
   { id: "PAY-78229", order: "NV-82389", customer: "نگار صادقی", method: "card", methodLabel: "کارت بانکی", amount: 3450000, status: "success", date: "۱۴۰۳/۰۹/۱۱", ref: "۱۲۸۲۳۹۱۲۰" },
 ];
 
-export const admins: Admin[] = [
-  { name: "امیر حسینی", email: "amir@novamarket.ir", role: "مدیر ارشد", status: "active", last: "۲ دقیقه پیش", avatar: "ا" },
-  { name: "مریم احمدی", email: "maryam@novamarket.ir", role: "مدیر محصولات", status: "active", last: "۱ ساعت پیش", avatar: "م" },
-  { name: "علی رضایی", email: "ali.r@novamarket.ir", role: "مدیر فروش", status: "active", last: "دیروز", avatar: "ع" },
-  { name: "زهرا کریمی", email: "z.karimi@novamarket.ir", role: "پشتیبان", status: "active", last: "۳ ساعت پیش", avatar: "ز" },
-  { name: "حسین نوری", email: "hossein@novamarket.ir", role: "مدیر محتوا", status: "inactive", last: "۲ هفته پیش", avatar: "ح" },
-];
+// export const admins: Admin[] = [
+//   { name: "امیر حسینی", email: "amir@novamarket.ir", role: "مدیر ارشد", isActive: true, last: "۲ دقیقه پیش", avatar: "ا" },
+//   { name: "مریم احمدی", email: "maryam@novamarket.ir", role: "مدیر محصولات", isActive: true, last: "۱ ساعت پیش", avatar: "م" },
+//   { name: "علی رضایی", email: "ali.r@novamarket.ir", role: "مدیر فروش", isActive: true, last: "دیروز", avatar: "ع" },
+//   { name: "زهرا کریمی", email: "z.karimi@novamarket.ir", role: "پشتیبان", isActive: true, last: "۳ ساعت پیش", avatar: "ز" },
+//   { name: "حسین نوری", email: "hossein@novamarket.ir", role: "مدیر محتوا", isActive: false, last: "۲ هفته پیش", avatar: "ح" },
+// ];
 
 export const deviceData: DeviceDatum[] = [
   { name: "موبایل", value: 62, color: "#3742fa" },

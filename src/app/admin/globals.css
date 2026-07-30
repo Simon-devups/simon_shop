@@ -484,6 +484,7 @@ html, body {
   place-items: center;
   transition: all 0.2s;
 }
+
 .theme-toggle button.active { background: #fff; color: var(--accent); box-shadow: 0 2px 6px rgba(45,52,54,0.08); }
 
 .profile {
@@ -1146,4 +1147,114 @@ input[type="number"] { -moz-appearance: textfield; }
 }
 .toggle-input:checked + .toggle-track .toggle-thumb {
   right: 21px;
+}
+
+
+
+
+/* ===================================================================== */
+/* دارک تم — با اعمال کلاس .dark روی <html> فعال می‌شود                  */
+/* ===================================================================== */
+.dark {
+  --bg: #0d0f14;
+  --surface: #161922;
+  --surface-2: #1c202b;
+  --border: #2a2f3d;
+  --border-soft: #232733;
+  --hover: #20242f;
+  --text: #eef1f5;
+  --text-soft: #c7cbd4;
+  --muted: #8891a0;
+  --muted-2: #5b6474;
+
+  --accent: #6c7bff;
+  --accent-hover: #8189ff;
+  --accent-soft: #1c2044;
+  --accent-soft-2: #262c58;
+
+  --success: #33e08a;
+  --success-soft: #0f2b1f;
+  --warning: #ffb648;
+  --warning-soft: #35270f;
+  --danger: #ff6b78;
+  --danger-soft: #3a161b;
+  --info: #57a8ff;
+  --info-soft: #122a42;
+
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-pop: 0 10px 30px rgba(108, 123, 255, 0.35);
+
+  color-scheme: dark;
+}
+
+/* اسکرول‌بار */
+.dark ::-webkit-scrollbar-thumb {
+  background: #333a4d;
+  border: 2px solid var(--bg);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #454d63;
+}
+
+/* انتخاب متن */
+.dark ::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* کارت خوش‌آمدگویی داشبورد */
+.dark .greeting {
+  background: linear-gradient(120deg, #171b28 0%, #1b1f3d 100%);
+}
+
+/* اسکلتون لودینگ */
+.dark .skeleton {
+  background: linear-gradient(90deg, #1c202b 0%, #242938 50%, #1c202b 100%);
+}
+
+/* آیکون‌های رنگی KPI که هاردکد بودن */
+.dark .kpi-icon.pink { background: #3a1a2c; color: #ff8dbb; }
+.dark .kpi-icon.purple { background: #241b3d; color: #b696ff; }
+.dark .kpi-icon.cyan { background: #0f2f38; color: #56dcf0; }
+
+/* فوکوس اینپوت‌ها و جست‌وجو (به‌جای پس‌زمینه سفید هاردکد) */
+.dark .input:focus,
+.dark .select:focus,
+.dark .textarea:focus,
+.dark .search-box input:focus {
+  background: var(--surface-2);
+}
+
+/* آیکون ذره‌بین جست‌وجو و فلش select (رنگ خاکستری روشن‌تر برای پس‌زمینه تیره) */
+.dark .input-search {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238891a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+}
+.dark .select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238891a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
+/* کلید میانبر جست‌وجو (kbd) */
+.dark .search-box .kbd {
+  background: var(--surface-2);
+}
+
+/* حاشیه‌ی نقطه‌ی اعلان روی آیکون‌ها (به‌جای border سفید هاردکد) */
+.dark .icon-btn .dot {
+  border-color: var(--surface-2);
+}
+
+/* حاشیه‌ی وضعیت آنلاین آواتار */
+.dark .avatar-status {
+  border-color: var(--surface);
+}
+
+/* نقطه‌ی شروع آیتم‌های تایم‌لاین */
+.dark .tl-item::before {
+  background: var(--surface);
+}
+
+/* تاگل سوییچ در حالت خاموش، کمی روشن‌تر از سطح تا قابل تشخیص باشه */
+.dark .toggle-track {
+  background: #333a4d;
 }

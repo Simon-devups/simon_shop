@@ -1,12 +1,20 @@
 import "dotenv/config";
-import { PrismaClient } from "@prisma/client"; // مسیر خروجی generate خودتون
+import { PrismaClient, Role } from "@prisma/client"; // مسیر خروجی generate خودتون
 import { PrismaPg } from "@prisma/adapter-pg";
+import * as bcrypt from "bcryptjs";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
 
+const password = "12345678";
+const saltRound = 10;
+
+
 async function main() {
+    await prisma.userActiveTime.deleteMany();
+    await prisma.user.deleteMany();
+
     await prisma.variantValue.deleteMany();
 
     await prisma.productVariant.deleteMany();
@@ -22,6 +30,44 @@ async function main() {
     await prisma.category.deleteMany();
 
     await prisma.brand.deleteMany();
+
+    const admins = await prisma.user.createMany({
+        data:[
+            {
+                name:"fariar",
+                email:"fariar.ansari@gmail.com",
+                password:await bcrypt.hash(password,saltRound),
+                role:Role.ADMIN,
+            },
+            {
+                name:"aryan",
+                email:"aryan.rad@gmail.com",
+                password:await bcrypt.hash(password,saltRound),
+                role:Role.ADMIN
+            }
+        ]
+    })
+
+    // const  activeTimes = await prisma.userActiveTime.createMany({
+    //     data:[
+    //         {userId:admins[0].id}
+    //     ]
+    // })
+
+    const users = await prisma.user.createMany({
+        data:[
+            {
+                name:"nima",
+                email:"nima.shamshiri@gmail.com",
+                password:await bcrypt.hash(password,saltRound)
+            },
+            {
+                name:"sajjad",
+                email:"sjpd@gmail.com",
+                password:await bcrypt.hash(password,saltRound)
+            }
+        ]
+    })
 
     const apple = await prisma.brand.create({
         data: {

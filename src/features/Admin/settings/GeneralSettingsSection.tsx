@@ -1,6 +1,8 @@
 import ToggleSwitch from "@/components/ui/ToggleSwitch";
+import { useTheme } from "@/components/admin/ThemeProvider";
 
 export default function GeneralSettingsSection() {
+  const { isDark, toggleTheme } = useTheme();
   return (
     <>
       <div className="card fade-up">
@@ -47,7 +49,7 @@ export default function GeneralSettingsSection() {
               <div style={{ fontSize: 13.5, fontWeight: 600 }}>حالت تاریک</div>
               <div style={{ fontSize: 12, color: "var(--muted)" }}>نمایش پنل با پس‌زمینه تیره</div>
             </div>
-            <ToggleSwitch />
+            <ToggleSwitch defaultChecked={isDark} onChange={toggleTheme} />
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0" }}>
             <div>
