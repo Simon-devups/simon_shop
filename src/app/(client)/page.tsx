@@ -1,10 +1,10 @@
 "use client";
 
 import { useApp } from "@/context/AppContext";
-import Hero from "@/components/store/Hero";
-import Categories from "@/components/store/Categories";
-import AmazingOffers from "@/components/store/AmazingOffers";
-import Brands from "@/components/store/Brands";
+import Hero from "@/components/client/Hero";
+import Categories from "@/components/client/Categories";
+import AmazingOffers from "@/components/client/AmazingOffers";
+import Brands from "@/components/client/Brands";
 import {
   popularProducts,
   phoneProducts,
