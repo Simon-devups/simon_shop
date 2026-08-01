@@ -1,4 +1,4 @@
-import { ProductCard } from "@/features/product/components/ProductCard";
+import { ProductCard } from "@/features/Client/product/components/ProductCard";
 
 export default function ProductsPage({
   searchParams,
