@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
 import { Vazirmatn } from "next/font/google";
-import "@/styles/globals.css";
-import AppProvider from "@/context/AppContext";
-import Navbar from "@/components/store/Navbar";
-import Footer from "@/components/store/Footer";
-import CartDrawer from "@/components/store/CartDrawer";
-import AuthModal from "@/components/store/AuthModal";
-import ProductDetailModal from "@/components/store/ProductDetailModal";
+import "@/app/(client)/globals.css";
+import Footer from "@/components/client/Footer";
+import Navbar from "@/components/client/Navbar";
 
 const vazir = Vazirmatn({
   subsets: ["arabic"],
@@ -27,14 +23,9 @@ export default function RootLayout({
   return (
     <html lang="fa" dir="rtl" className={vazir.variable}>
       <body className="min-h-screen bg-[#E8EDF2] font-sans antialiased">
-        <AppProvider>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-          <CartDrawer />
-          <AuthModal />
-          <ProductDetailModal />
-        </AppProvider>
+        <Navbar />
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );

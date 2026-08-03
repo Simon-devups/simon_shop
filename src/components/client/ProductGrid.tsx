@@ -1,6 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import type { Product } from "../../data/store";
-import ProductCard from "./ProductCard";
+import { ProductCard } from "@/features/Client/product/components/ProductCard";
 
 type Props = {
   id?: string;

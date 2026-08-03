@@ -1,14 +1,21 @@
-"use client";
+"use client"
+import { useState } from "react";
+import type { Product } from "../../data/store";
+import { amazingProducts } from "../../data/store";
 
-import { useApp } from "@/context/AppContext";
-import Hero from "@/components/client/Hero";
-import Categories from "@/components/client/Categories";
-import AmazingOffers from "@/components/client/AmazingOffers";
+import AdCarousel from "@/components/client/AdCarousel";
 import Brands from "@/components/client/Brands";
-import {
-  popularProducts,
-  phoneProducts,
-} from "@/data/store";
+import Categories from "@/components/client/Categories";
+import ProductGrid from "@/components/client/ProductGrid";
+import AmazingOffers from "@/components/client/AmazingOffers";
+import Hero from "@/components/client/Hero";
+
+// NOTE: در فایل data/store احتمالاً آرایه‌های دیگری هم برای
+// "جدیدترین‌ها" و "پرفروش‌ترین‌ها" وجود دارد (مثلاً newestProducts,
+// bestSellerProducts). فعلاً چون به من ارسال نشده بود، از همان
+// amazingProducts به‌عنوان placeholder برای دو گرید پایینی استفاده کردم.
+// کافیه import و نام‌ها را با آرایه‌های واقعی خودت جایگزین کنی.
+
 import {
   ShieldCheck,
   Truck,
@@ -17,18 +24,30 @@ import {
   RefreshCw,
   BadgeCheck,
 } from "lucide-react";
-import Link from "next/link";
-import AdCarousel from "@/components/client/AdCarousel";
-import ProductGrid from "@/components/client/ProductGrid";
-
 export default function HomePage() {
-  const { addToCart, setSelectedProduct, openAuthModal } = useApp();
+  const [cart, setCart] = useState<Product[]>([]);
+  const [selected, setSelected] = useState<Product | null>(null);
+  const handleAdd = (p: Product) => {
+    setCart((prev) => [...prev, p]);
+  };
+
+  const handleSelect = (p: Product) => {
+    setSelected(p);
+    // اینجا می‌تونی مثلاً به صفحه‌ی جزئیات محصول ناوبری کنی
+  };
+
+  const handleSelectCategory = (catId: string) => {
+    console.log("selected category:", catId);
+    // اینجا می‌تونی فیلتر یا ناوبری به صفحه‌ی دسته‌بندی رو انجام بدی
+  };
 
   return (
-    <>
+
+    <main className="min-h-screen bg-[#E8EDF2]">
+      {/* Features strip */}
+
       <Hero />
 
-      {/* ویژگی‌ها */}
       <section className="mx-auto max-w-[1440px] px-4 py-6 md:px-6">
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
           {[
@@ -56,26 +75,21 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+      
+      <Categories onSelectCategory={handleSelectCategory} />
 
       <AdCarousel variant="products" />
 
-      {/* دسته‌بندی‌ها با لینک به صفحه محصولات */}
-      <Categories />
+      <AmazingOffers onAdd={handleAdd} onSelect={handleSelect} />
 
       <ProductGrid
-        id="popular"
-        eyebrow="محبوب‌ترین‌ها"
-        title="محصولات پرفروش"
-        subtitle="انتخاب کاربران نوا استور در هفته اخیر"
-        products={popularProducts}
-        onAdd={addToCart}
-        onSelect={setSelectedProduct}
-        onViewAll="/products?category=all"
-      />
-
-      <AmazingOffers
-        onAdd={addToCart}
-        onSelect={setSelectedProduct}
+        id="newest"
+        eyebrow="تازه‌ها"
+        title="جدیدترین محصولات"
+        subtitle="آخرین محصولات اضافه‌شده به فروشگاه"
+        products={amazingProducts}
+        onAdd={handleAdd}
+        onSelect={handleSelect}
       />
 
       <Brands />
@@ -83,20 +97,14 @@ export default function HomePage() {
       <AdCarousel variant="phones" />
 
       <ProductGrid
-        id="phones"
-        eyebrow="دسته موبایل"
-        title="گوشی‌های هوشمند"
-        subtitle="پرچمدار تا میان‌رده — موجودی محدود"
-        products={phoneProducts}
-        onAdd={addToCart}
-        onSelect={setSelectedProduct}
-        onViewAll="/products?category=phones"
+        id="popular"
+        eyebrow="محبوب‌ها"
+        title="پرفروش‌ترین محصولات"
+        subtitle="محصولاتی که بیشترین استقبال رو داشتن"
+        products={amazingProducts}
+        onAdd={handleAdd}
+        onSelect={handleSelect}
       />
-
-      {/* بنر اپلیکیشن */}
-      <section className="mx-auto max-w-[1440px] px-4 py-6 md:px-6 md:py-10">
-        {/* ... (همون بنر قبلی) ... */}
-      </section>
-    </>
+    </main>
   );
 }

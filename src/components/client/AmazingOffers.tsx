@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Flame, ArrowLeft } from "lucide-react";
 import { amazingProducts, type Product } from "../../data/store";
-import ProductCard from "./ProductCard";
+import { ProductCard } from "@/features/Client/product/components/ProductCard";
 
 type Props = {
   onAdd: (p: Product) => void;

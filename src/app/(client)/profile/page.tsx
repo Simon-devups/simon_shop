@@ -1,7 +1,6 @@
 "use client";
 
 import ProfilePage from "@/pages/store/ProfilePage";
-import { useApp } from "@/context/AppContext";
 import { useRouter } from "next/navigation";
 
 export default function ProfileRoute() {
