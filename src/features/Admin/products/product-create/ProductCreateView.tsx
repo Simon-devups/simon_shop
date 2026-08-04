@@ -13,8 +13,8 @@ import {
   Save,
   Eye,
 } from "lucide-react";
-import PageHeader from "@/components/ui/PageHeader";
-import VerticalTabs, { type VerticalTabItem } from "@/components/ui/VerticalTabs";
+import PageHeader from "@/components/admin/ui/PageHeader";
+import VerticalTabs, { type VerticalTabItem } from "@/components/admin/ui/VerticalTabs";
 import CompletionTipBanner from "./CompletionTipBanner";
 import BasicInfoSection from "./BasicInfoSection";
 import ImagesSection from "./ImagesSection";
@@ -66,13 +66,13 @@ export default function ProductCreateView() {
         subtitle="اطلاعات محصول را در بخش‌های زیر تکمیل کنید"
         actions={
           <>
-            <button className="btn btn-secondary" onClick={() => router.push("/products")}>
+            <button className="btn btn-secondary" onClick={() => router.push("/admin/products")}>
               انصراف
             </button>
             <button className="btn btn-secondary">
               <Eye size={15} /> پیش‌نمایش
             </button>
-            <button className="btn btn-primary" onClick={() => router.push("/products")}>
+            <button className="btn btn-primary" onClick={() => router.push("/admin/products")}>
               <Save size={16} /> ذخیره محصول
             </button>
           </>

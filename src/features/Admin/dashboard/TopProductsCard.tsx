@@ -1,6 +1,6 @@
 import { ArrowUpLeft } from "lucide-react";
-import Avatar from "@/components/ui/Avatar";
-import ProgressBar from "@/components/ui/ProgressBar";
+import Avatar from "@/components/admin/ui/Avatar";
+import ProgressBar from "@/components/admin/ui/ProgressBar";
 import { formatPrice } from "@/lib/utils";
 import type { TopProduct } from "@/constants/types";
 

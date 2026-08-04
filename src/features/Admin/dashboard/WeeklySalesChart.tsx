@@ -1,7 +1,7 @@
 "use client";
 
 import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
-import Segmented from "@/components/ui/Segmented";
+import Segmented from "@/components/admin/ui/Segmented";
 import { tooltipStyle, axisTickStyle } from "@/lib/chart-config";
 import type { SalesDataPoint } from "@/constants/types";
 

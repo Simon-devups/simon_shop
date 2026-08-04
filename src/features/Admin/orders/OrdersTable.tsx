@@ -1,5 +1,5 @@
-import Avatar from "@/components/ui/Avatar";
-import Badge from "@/components/ui/Badge";
+import Avatar from "@/components/admin/ui/Avatar";
+import Badge from "@/components/admin/ui/Badge";
 import { formatPrice } from "@/lib/utils";
 import type { RecentOrder } from "@/constants/types";
 

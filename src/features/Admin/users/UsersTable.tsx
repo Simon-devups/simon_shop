@@ -1,6 +1,6 @@
 import { Eye, Edit3, Trash2 } from "lucide-react";
-import Avatar from "@/components/ui/Avatar";
-import Badge from "@/components/ui/Badge";
+import Avatar from "@/components/admin/ui/Avatar";
+import Badge from "@/components/admin/ui/Badge";
 import type { AppUser, BadgeVariant } from "@/constants/types";
 
 const roleVariant: Record<AppUser["role"], BadgeVariant> = {

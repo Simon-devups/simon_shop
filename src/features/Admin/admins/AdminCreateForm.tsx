@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Save } from "lucide-react";
-import PageHeader from "@/components/ui/PageHeader";
-import ToggleSwitch from "@/components/ui/ToggleSwitch";
+import PageHeader from "@/components/admin/ui/PageHeader";
+import ToggleSwitch from "@/components/admin/ui/ToggleSwitch";
 
 const roles = ["مدیر ارشد", "مدیر محصولات", "مدیر فروش", "پشتیبان", "مدیر محتوا"];
 

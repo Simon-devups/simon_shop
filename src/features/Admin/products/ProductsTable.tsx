@@ -1,16 +1,18 @@
 import { Eye, Edit3, Trash2, MoreHorizontal } from "lucide-react";
-import Badge from "@/components/ui/Badge";
+import Image from "next/image";
+import Badge from "@/components/admin/ui/Badge";
 import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/constants/types";
+import { getProductsForAdmin } from "@/lib/Admin/products/getProducts";
 
 interface ProductsTableProps {
   products: Product[];
-  selected: number[];
-  onToggle: (id: number) => void;
+  selected: string[];
+  onToggle: (id: string) => void;
   onToggleAll: () => void;
 }
 
-export default function ProductsTable({ products, selected, onToggle, onToggleAll }: ProductsTableProps) {
+export default function ProductsTable({products, selected, onToggle, onToggleAll }: ProductsTableProps) {
   const allSelected = selected.length === products.length && products.length > 0;
 
   return (
@@ -38,13 +40,20 @@ export default function ProductsTable({ products, selected, onToggle, onToggleAl
                 <input type="checkbox" checked={selected.includes(p.id)} onChange={() => onToggle(p.id)} />
               </td>
               <td>
-                <div className="product-thumb">{p.emoji}</div>
+                <div className="product-thumb">
+                  <Image
+                    src={p.imageUrl}
+                    alt={p.name}
+                    width={50}
+                    height={50}
+                  />
+                </div>
               </td>
               <td>
                 <div className="cell-strong" style={{ marginBottom: 2 }}>
                   {p.name}
                 </div>
-                <div className="cell-muted num-fa">SKU-{p.id.toString().padStart(5, "0")}</div>
+                <div className="cell-muted num-fa">{p.sku}-{p.id.toString()}</div>
               </td>
               <td>
                 <Badge variant="neutral" dot={false}>
@@ -69,7 +78,7 @@ export default function ProductsTable({ products, selected, onToggle, onToggleAl
                 )}
               </td>
               <td>
-                {p.status === "active" ? (
+                {p.status === true ? (
                   <Badge variant="success" pulse>
                     فعال
                   </Badge>

@@ -1,4 +1,4 @@
-import ToggleSwitch from "@/components/ui/ToggleSwitch";
+import ToggleSwitch from "@/components/admin/ui/ToggleSwitch";
 
 export default function SecuritySettingsSection() {
   return (

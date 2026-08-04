@@ -1,5 +1,5 @@
 import { Phone, Mail, MapPin } from "lucide-react";
-import Avatar from "@/components/ui/Avatar";
+import Avatar from "@/components/admin/ui/Avatar";
 import type { RecentOrder } from "@/constants/types";
 
 export default function OrderCustomerCard({ order }: { order: RecentOrder }) {

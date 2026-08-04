@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import PageHeader from "@/components/ui/PageHeader";
+import PageHeader from "@/components/admin/ui/PageHeader";
 import CategoriesKpiRow from "./CategoriesKpiRow";
 import CategoriesTable from "./CategoriesTable";
 import type { Category } from "@/constants/types";

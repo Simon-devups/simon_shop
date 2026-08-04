@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Download, X } from "lucide-react";
-import PageHeader from "@/components/ui/PageHeader";
+import PageHeader from "@/components/admin/ui/PageHeader";
 import OrdersKpiRow from "./OrdersKpiRow";
 import OrdersTable from "./OrdersTable";
 import OrderTimeline from "./OrderTimeline";

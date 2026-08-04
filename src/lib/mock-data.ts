@@ -89,16 +89,16 @@ export const recentOrders: RecentOrder[] = [
   { id: "NV-82388", customer: "رضا حسینی", avatar: "ر", amount: 9800000, status: "success", statusLabel: "تکمیل شده", date: "۱۴۰۳/۰۹/۱۰", payment: "پرداخت آنلاین" },
 ];
 
-export const products: Product[] = [
-  { id: 1, name: "هدفون بی‌سیم سونی WH-1000XM5", category: "الکترونیک", brand: "سونی", price: 18500000, stock: 124, status: "active", emoji: "🎧" },
-  { id: 2, name: "ساعت هوشمند اپل واچ سری ۹", category: "الکترونیک", brand: "اپل", price: 24500000, stock: 87, status: "active", emoji: "⌚" },
-  { id: 3, name: "کیف چرم مردانه فندی", category: "اکسسوری", brand: "فندی", price: 12800000, stock: 56, status: "active", emoji: "👜" },
-  { id: 4, name: "عطر ادوپرفیوم شنل بلو", category: "زیبایی", brand: "شنل", price: 9800000, stock: 32, status: "active", emoji: "🌸" },
-  { id: 5, name: "کفش ورزشی نایک ایر مکس", category: "پوشاک", brand: "نایک", price: 7200000, stock: 0, status: "out", emoji: "👟" },
-  { id: 6, name: "لپ‌تاپ مک‌بوک پرو M3", category: "الکترونیک", brand: "اپل", price: 89500000, stock: 18, status: "active", emoji: "💻" },
-  { id: 7, name: "گوشی آیفون ۱۵ پرو مکس", category: "الکترونیک", brand: "اپل", price: 72500000, stock: 42, status: "active", emoji: "📱" },
-  { id: 8, name: "تی‌شرت مردانه نایک DRI-FIT", category: "پوشاک", brand: "نایک", price: 1850000, stock: 245, status: "active", emoji: "👕" },
-];
+// export const products: Product[] = [
+//   { id: 1, name: "هدفون بی‌سیم سونی WH-1000XM5", category: "الکترونیک", brand: "سونی", price: 18500000, stock: 124, status: true },
+//   { id: 2, name: "ساعت هوشمند اپل واچ سری ۹", category: "الکترونیک", brand: "اپل", price: 24500000, stock: 87, status: true },
+//   { id: 3, name: "کیف چرم مردانه فندی", category: "اکسسوری", brand: "فندی", price: 12800000, stock: 56, status: true },
+//   { id: 4, name: "عطر ادوپرفیوم شنل بلو", category: "زیبایی", brand: "شنل", price: 9800000, stock: 32, status: true},
+//   { id: 5, name: "کفش ورزشی نایک ایر مکس", category: "پوشاک", brand: "نایک", price: 7200000, stock: 0, status: false },
+//   { id: 6, name: "لپ‌تاپ مک‌بوک پرو M3", category: "الکترونیک", brand: "اپل", price: 89500000, stock: 18, status: true,},
+//   { id: 7, name: "گوشی آیفون ۱۵ پرو مکس", category: "الکترونیک", brand: "اپل", price: 72500000, stock: 42, status: true, },
+//   { id: 8, name: "تی‌شرت مردانه نایک DRI-FIT", category: "پوشاک", brand: "نایک", price: 1850000, stock: 245, status: true, },
+// ];
 
 export const users: AppUser[] = [
   { id: 1, name: "علی محمدی", email: "ali.mohammadi@email.com", phone: "۰۹۱۲۳۴۵۶۷۸۹", role: "customer", roleLabel: "مشتری", status: "active", joined: "۱۴۰۳/۰۶/۱۲", orders: 24, avatar: "ع" },
@@ -123,25 +123,25 @@ export const discounts: Discount[] = [
   { code: "VIP100K", type: "مبلغ ثابت", value: 100000, uses: 56, limit: 200, status: "expired", expires: "۱۴۰۳/۰۸/۳۰" },
 ];
 
-export const categories: Category[] = [
-  { id: 1, name: "الکترونیک", icon: "💻", parent: "-", products: 248, active: true, color: "#3742fa" },
-  { id: 2, name: "پوشاک", icon: "👕", parent: "-", products: 412, active: true, color: "#2ed573" },
-  { id: 3, name: "زیبایی و سلامت", icon: "💄", parent: "-", products: 186, active: true, color: "#ffa502" },
-  { id: 4, name: "خانه و آشپزخانه", icon: "🏠", parent: "-", products: 142, active: true, color: "#ff4757" },
-  { id: 5, name: "ورزش و سفر", icon: "⚽", parent: "-", products: 98, active: true, color: "#1e90ff" },
-  { id: 6, name: "هدفون و هندزفری", icon: "🎧", parent: "الکترونیک", products: 42, active: true, color: "#8a4cff" },
-  { id: 7, name: "ساعت هوشمند", icon: "⌚", parent: "الکترونیک", products: 28, active: true, color: "#00b8d4" },
-  { id: 8, name: "کفش ورزشی", icon: "👟", parent: "پوشاک", products: 64, active: false, color: "#ff4d8d" },
-];
+// export const categories: Category[] = [
+//   { id: 1, name: "الکترونیک", icon: "💻", parent: "-", products: 248, active: true, color: "#3742fa" },
+//   { id: 2, name: "پوشاک", icon: "👕", parent: "-", products: 412, active: true, color: "#2ed573" },
+//   { id: 3, name: "زیبایی و سلامت", icon: "💄", parent: "-", products: 186, active: true, color: "#ffa502" },
+//   { id: 4, name: "خانه و آشپزخانه", icon: "🏠", parent: "-", products: 142, active: true, color: "#ff4757" },
+//   { id: 5, name: "ورزش و سفر", icon: "⚽", parent: "-", products: 98, active: true, color: "#1e90ff" },
+//   { id: 6, name: "هدفون و هندزفری", icon: "🎧", parent: "الکترونیک", products: 42, active: true, color: "#8a4cff" },
+//   { id: 7, name: "ساعت هوشمند", icon: "⌚", parent: "الکترونیک", products: 28, active: true, color: "#00b8d4" },
+//   { id: 8, name: "کفش ورزشی", icon: "👟", parent: "پوشاک", products: 64, active: false, color: "#ff4d8d" },
+// ];
 
-export const brands: Brand[] = [
-  { name: "Apple", country: "آمریکا", products: 124, revenue: 18400000000, logo: "🍎", color: "#000" },
-  { name: "Samsung", country: "کره جنوبی", products: 86, revenue: 9200000000, logo: "📱", color: "#1428a0" },
-  { name: "Sony", country: "ژاپن", products: 64, revenue: 6400000000, logo: "🎧", color: "#000" },
-  { name: "Nike", country: "آمریکا", products: 142, revenue: 5800000000, logo: "👟", color: "#fa5400" },
-  { name: "Adidas", country: "آلمان", products: 98, revenue: 4200000000, logo: "⚽", color: "#000" },
-  { name: "Chanel", country: "فرانسه", products: 42, revenue: 7800000000, logo: "🌸", color: "#000" },
-];
+// export const brands: Brand[] = [
+//   { name: "Apple", country: "آمریکا", products: 124, revenue: 18400000000, logo: "🍎", color: "#000" },
+//   { name: "Samsung", country: "کره جنوبی", products: 86, revenue: 9200000000, logo: "📱", color: "#1428a0" },
+//   { name: "Sony", country: "ژاپن", products: 64, revenue: 6400000000, logo: "🎧", color: "#000" },
+//   { name: "Nike", country: "آمریکا", products: 142, revenue: 5800000000, logo: "👟", color: "#fa5400" },
+//   { name: "Adidas", country: "آلمان", products: 98, revenue: 4200000000, logo: "⚽", color: "#000" },
+//   { name: "Chanel", country: "فرانسه", products: 42, revenue: 7800000000, logo: "🌸", color: "#000" },
+// ];
 
 export const payments: Payment[] = [
   { id: "PAY-78234", order: "NV-82394", customer: "علی محمدی", method: "card", methodLabel: "کارت بانکی", amount: 4250000, status: "success", date: "۱۴۰۳/۰۹/۱۲", ref: "۸۲۳۴۲۹۱۲۸" },

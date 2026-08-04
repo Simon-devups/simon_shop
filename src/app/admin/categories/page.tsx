@@ -1,6 +1,9 @@
 import CategoriesView from "@/features/Admin/categories/CategoriesView";
-import { categories } from "@/lib/mock-data";
+import { getCategories } from "@/lib/Admin/categories/categories";
+// import { categories } from "@/lib/mock-data";
 
-export default function CategoriesPage() {
+export default async function CategoriesPage() {
+  const categories = await getCategories()
+  // console.log("category : ",categories)
   return <CategoriesView categories={categories} />;
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import ToggleSwitch from "@/components/ui/ToggleSwitch";
+import ToggleSwitch from "@/components/admin/ui/ToggleSwitch";
 import { formatPrice } from "@/lib/utils";
 import type { ShippingMethod } from "@/constants/types";
 

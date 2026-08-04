@@ -1,7 +1,7 @@
 import { Check, X, Trash2 } from "lucide-react";
-import Avatar from "@/components/ui/Avatar";
-import StarRating from "@/components/ui/StarRating";
-import Badge from "@/components/ui/Badge";
+import Avatar from "@/components/admin/ui/Avatar";
+import StarRating from "@/components/admin/ui/StarRating";
+import Badge from "@/components/admin/ui/Badge";
 import type { ProductComment } from "@/constants/types";
 
 const statusLabel: Record<ProductComment["status"], string> = {

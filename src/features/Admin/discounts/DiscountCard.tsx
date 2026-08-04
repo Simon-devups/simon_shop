@@ -1,6 +1,6 @@
 import { Copy, Edit3, Trash2 } from "lucide-react";
-import Badge from "@/components/ui/Badge";
-import ProgressBar from "@/components/ui/ProgressBar";
+import Badge from "@/components/admin/ui/Badge";
+import ProgressBar from "@/components/admin/ui/ProgressBar";
 import { formatPrice } from "@/lib/utils";
 import type { Discount } from "@/constants/types";
 

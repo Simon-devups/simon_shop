@@ -1,6 +1,9 @@
 import BrandsView from "@/features/Admin/brands/BrandsView";
-import { brands } from "@/lib/mock-data";
+import { getBrands } from "@/lib/Admin/brands/bands";
+// import { brands } from "@/lib/mock-data";
 
-export default function BrandsPage() {
+export default async function BrandsPage() {
+  const brands = await getBrands()
+  console.log(brands)
   return <BrandsView brands={brands} />;
 }

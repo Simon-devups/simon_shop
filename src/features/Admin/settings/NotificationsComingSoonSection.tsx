@@ -1,5 +1,5 @@
 import { Bell } from "lucide-react";
-import EmptyState from "@/components/ui/EmptyState";
+import EmptyState from "@/components/admin/ui/EmptyState";
 
 export default function NotificationsComingSoonSection() {
   return (

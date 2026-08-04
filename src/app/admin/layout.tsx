@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Vazirmatn } from "next/font/google";
-import Sidebar from "@/components/Sidebar";
-import Topbar from "@/components/Topbar";
+import Sidebar from "@/components/admin/Sidebar";
+import Topbar from "@/components/admin/Topbar";
 import ThemeProvider from "@/components/admin/ThemeProvider";
 import "./globals.css";
+import { getPagesCount } from "@/lib/Admin/products/getProducts";
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
@@ -17,7 +18,8 @@ export const metadata: Metadata = {
   description: "پنل مدیریت فروشگاه نوا مارکت",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const productsCount = await getPagesCount()
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <head>
@@ -39,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={vazirmatn.variable}>
         <ThemeProvider>
           <div className="app-shell">
-            <Sidebar />
+            <Sidebar productsCount={productsCount}/>
             <div className="main">
               <Topbar />
               <main className="page">{children}</main>

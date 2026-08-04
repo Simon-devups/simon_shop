@@ -1,4 +1,4 @@
-import PageHeader from "@/components/ui/PageHeader";
+import PageHeader from "@/components/admin/ui/PageHeader";
 import AnalyticsKpiRow from "./AnalyticsKpiRow";
 import RevenueTrendChart from "./RevenueTrendChart";
 import VisitorsChart from "./VisitorsChart";

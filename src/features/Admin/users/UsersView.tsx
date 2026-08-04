@@ -1,5 +1,5 @@
 import { Plus, Download } from "lucide-react";
-import PageHeader from "@/components/ui/PageHeader";
+import PageHeader from "@/components/admin/ui/PageHeader";
 import UsersKpiRow from "./UsersKpiRow";
 import UsersTable from "./UsersTable";
 import type { AppUser } from "@/constants/types";

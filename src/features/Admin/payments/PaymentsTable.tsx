@@ -1,5 +1,5 @@
 import { Wallet, CreditCard as CardIcon, Repeat, Eye } from "lucide-react";
-import Badge from "@/components/ui/Badge";
+import Badge from "@/components/admin/ui/Badge";
 import { formatPrice } from "@/lib/utils";
 import type { Payment, BadgeVariant } from "@/constants/types";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import ProgressBar from "@/components/ui/ProgressBar";
+import ProgressBar from "@/components/admin/ui/ProgressBar";
 import type { TrafficSource } from "@/constants/types";
 
 export default function TrafficSourcesChart({ data }: { data: TrafficSource[] }) {

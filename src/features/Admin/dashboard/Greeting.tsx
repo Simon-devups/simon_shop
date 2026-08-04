@@ -1,14 +1,22 @@
 import { Calendar, Activity, Eye, Download, Sparkles } from "lucide-react";
 
 export default function Greeting() {
+  const date = new Date();
+
+  const formattedDate = new Intl.DateTimeFormat("fa-IR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(date);
+
   return (
     <div className="greeting fade-up">
       <div className="greeting-text">
         <h2>سلام، امیر عزیز 👋</h2>
-        <p>امروز عملکرد فروشگاه شما فوق‌العاده بوده است. ۲۸٪ نسبت به دیروز رشد داشته‌اید.</p>
+        <p>امروز عملکرد فروشگاه شما فوق‌العاده بوده است.</p>
         <div className="greeting-meta">
           <div className="gm-item">
-            <Calendar size={14} /> <strong>شنبه ۱۷ آذر ۱۴۰۳</strong>
+            <Calendar size={14} /> <strong>{formattedDate}</strong>
           </div>
           <div className="gm-item">
             <Activity size={14} /> وضعیت سرور: <strong style={{ color: "var(--success)" }}>پایدار</strong>

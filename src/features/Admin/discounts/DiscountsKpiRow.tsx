@@ -1,5 +1,5 @@
 import { Ticket, CheckCircle2, XCircle, Percent } from "lucide-react";
-import KpiCard from "@/components/ui/KpiCard";
+import KpiCard from "@/components/admin/ui/KpiCard";
 import { formatPrice } from "@/lib/utils";
 import type { Discount } from "@/constants/types";
 

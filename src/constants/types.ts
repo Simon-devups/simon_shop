@@ -1,4 +1,5 @@
 import { Role } from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime/client";
 import type { LucideIcon } from "lucide-react";
 
 /* ===================== عمومی (Shared / UI) ===================== */
@@ -93,17 +94,18 @@ export interface RecentOrder {
 
 /* ===================== محصولات (Products) ===================== */
 
-export type ProductStatus = "active" | "out" | "draft";
+export type ProductStatus = true|false;
 
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   category: string;
   brand: string;
   price: number;
   stock: number;
   status: ProductStatus;
-  emoji: string;
+  imageUrl:string;
+  sku:string
 }
 
 export interface ProductSpec {
@@ -120,24 +122,23 @@ export interface ShippingMethod {
 /* ===================== دسته‌بندی‌ها (Categories) ===================== */
 
 export interface Category {
-  id: number;
+  id: string;
   name: string;
-  icon: string;
-  parent: string;
+  parent: {id:string,name:string,slug:string} | null;
   products: number;
-  active: boolean;
-  color: string;
+  slug: string;
 }
 
 /* ===================== برندها (Brands) ===================== */
 
 export interface Brand {
   name: string;
-  country: string;
+  // country: string;
   products: number;
-  revenue: number;
-  logo: string;
-  color: string;
+  // revenue: number;
+  logo: string | null;
+  slug:string;
+  // color: string;
 }
 
 /* ===================== کاربران (Users) ===================== */

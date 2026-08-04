@@ -1,5 +1,5 @@
 import { Zap } from "lucide-react";
-import ProgressBar from "@/components/ui/ProgressBar";
+import ProgressBar from "@/components/admin/ui/ProgressBar";
 
 export default function CompletionTipBanner() {
   return (

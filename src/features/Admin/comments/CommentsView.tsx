@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import PageHeader from "@/components/ui/PageHeader";
-import PillTabs from "@/components/ui/PillTabs";
+import PageHeader from "@/components/admin/ui/PageHeader";
+import PillTabs from "@/components/admin/ui/PillTabs";
 import CommentsKpiRow from "./CommentsKpiRow";
 import CommentItem from "./CommentItem";
 import type { ProductComment } from "@/constants/types";

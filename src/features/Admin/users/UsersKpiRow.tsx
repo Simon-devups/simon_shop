@@ -1,5 +1,5 @@
 import { Users, UserCheck, Crown, ShieldCheck } from "lucide-react";
-import KpiCard from "@/components/ui/KpiCard";
+import KpiCard from "@/components/admin/ui/KpiCard";
 import { formatPrice } from "@/lib/utils";
 import type { AppUser } from "@/constants/types";
 

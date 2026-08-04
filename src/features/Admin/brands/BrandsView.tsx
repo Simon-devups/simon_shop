@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import PageHeader from "@/components/ui/PageHeader";
+import PageHeader from "@/components/admin/ui/PageHeader";
 import BrandCard from "./BrandCard";
 import type { Brand } from "@/constants/types";
 

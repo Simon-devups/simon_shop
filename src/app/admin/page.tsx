@@ -1,9 +1,13 @@
 import DashboardView from "@/features/Admin/dashboard/DashboardView";
-import { salesData, monthlyData, categoryData, topProducts, recentOrders } from "@/lib/mock-data";
+import { getCategorySales, getDashboardKpis, getMonthlySales, getRecentOrders, getTopProducts, getWeeklySales } from "@/lib/Admin/orders/dashboard";
 
-// این تابع یک Server Component است. برای اتصال به Prisma کافیست بجای ایمپورت
-// مستقیم داده‌های mock، آن‌ها را با کوئری‌های Prisma جایگزین کنید.
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const dashboardKpis = await getDashboardKpis()
+  const salesData = await getWeeklySales()
+  const categoryData = await getCategorySales()
+  const topProducts = await getTopProducts()
+  const recentOrders = await getRecentOrders()
+  const monthlyData = await getMonthlySales()
   return (
     <DashboardView
       salesData={salesData}
@@ -11,6 +15,7 @@ export default function DashboardPage() {
       categoryData={categoryData}
       topProducts={topProducts}
       recentOrders={recentOrders}
+      kpis={dashboardKpis}
     />
   );
 }

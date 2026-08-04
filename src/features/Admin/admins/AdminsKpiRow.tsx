@@ -1,5 +1,5 @@
 import { ShieldCheck, UserCheck, UserX } from "lucide-react";
-import KpiCard from "@/components/ui/KpiCard";
+import KpiCard from "@/components/admin/ui/KpiCard";
 import type { Admin } from "@/constants/types";
 
 export default function AdminsKpiRow({ admins }: { admins: Admin[] }) {

@@ -1,5 +1,5 @@
 import { TrendingUp, Eye, ShoppingBag, Percent } from "lucide-react";
-import KpiCard from "@/components/ui/KpiCard";
+import KpiCard from "@/components/admin/ui/KpiCard";
 
 export default function AnalyticsKpiRow() {
   return (

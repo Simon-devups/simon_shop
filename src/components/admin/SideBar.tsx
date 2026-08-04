@@ -3,336 +3,106 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LogOut, Sparkles, ChevronLeft } from "lucide-react";
+import { mainNavItems, extraNavItems } from "@/lib/nav-config";
+import type { NavItem } from "@/constants/types";
 
-import { cn } from "@/utils/cn";
-
-import {
-  LayoutDashboard,
-  Package,
-  FolderTree,
-  Tag,
-  ShoppingCart,
-  Users,
-  MessageSquare,
-  Ticket,
-  CreditCard,
-  BarChart3,
-  Settings,
-  ShieldCheck,
-  LogOut,
-  Sparkles,
-  ChevronLeft,
-} from "lucide-react";
-
-
-type SidebarItem = {
-  label: string;
-  href: string;
-  icon: React.ElementType;
-  badge?: string;
-};
-
-
-export default function Sidebar() {
-
+export default function Sidebar({productsCount}:{productsCount:number}) {
+  const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
 
-  const [collapsed, setCollapsed] = useState(false);
+  const isActive = (item: NavItem) =>
+    item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
 
-
-  const mainItems: SidebarItem[] = [
-    {
-      label: "داشبورد",
-      href: "/admin/dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      label: "محصولات",
-      href: "/admin/products",
-      icon: Package,
-      badge: "۱۲",
-    },
-    {
-      label: "دسته‌بندی‌ها",
-      href: "/admin/categories",
-      icon: FolderTree,
-    },
-    {
-      label: "برندها",
-      href: "/admin/brands",
-      icon: Tag,
-    },
-    {
-      label: "سفارش‌ها",
-      href: "/admin/orders",
-      icon: ShoppingCart,
-      badge: "۸",
-    },
-    {
-      label: "کاربران",
-      href: "/admin/users",
-      icon: Users,
-    },
-    {
-      label: "نظرات",
-      href: "/admin/comments",
-      icon: MessageSquare,
-      badge: "۳",
-    },
-  ];
-
-
-  const extraItems: SidebarItem[] = [
-    {
-      label: "کدهای تخفیف",
-      href: "/admin/discounts",
-      icon: Ticket,
-    },
-    {
-      label: "پرداخت‌ها",
-      href: "/admin/payments",
-      icon: CreditCard,
-    },
-    {
-      label: "گزارشات",
-      href: "/admin/analytics",
-      icon: BarChart3,
-    },
-    {
-      label: "تنظیمات",
-      href: "/admin/settings",
-      icon: Settings,
-    },
-    {
-      label: "مدیران",
-      href: "/admin/admins",
-      icon: ShieldCheck,
-    },
-  ];
-
-
-  const renderItem = (item: SidebarItem) => {
-
+  const renderItem = (item: NavItem) => {
     const Icon = item.icon;
-
-    const active =
-      pathname === item.href ||
-      pathname.startsWith(item.href + "/");
-
-
+    const active = isActive(item);
     return (
-
       <Link
-        key={item.href}
-        href={item.href}
+        key={item.id}
+        href={`/admin/${item.href}`}
+        className={`nav-item ${active ? "active" : ""}`}
         title={collapsed ? item.label : undefined}
-
-        className={cn(
-          "nav-item",
-          active && "active"
-        )}
+        style={{ position: "relative" }}
       >
-
-        <Icon
-          size={18}
-          className="nav-icon"
-        />
-
-
-        {!collapsed && (
-          <span className="nav-label">
-            {item.label}
-          </span>
-        )}
-
-
-        {!collapsed && item.badge && (
-          <span className="nav-badge">
-            {item.badge}
-          </span>
-        )}
-
-
+        <Icon size={18} className="nav-icon" />
+        {!collapsed && <span className="nav-label">{item.label}</span>}
+        {!collapsed && item.badge && <span className="nav-badge">{productsCount}</span>}
         {collapsed && item.badge && (
-          <span className="nav-collapsed-badge">
+          <span
+            style={{
+              position: "absolute",
+              top: 8,
+              left: 8,
+              background: "#ff4757",
+              color: "#fff",
+              fontSize: 10,
+              padding: "1px 5px",
+              borderRadius: 6,
+              fontWeight: 700,
+            }}
+          >
             {item.badge}
           </span>
         )}
-
       </Link>
-
     );
   };
 
-
   return (
-
-    <aside
-      className={cn(
-        "sidebar",
-        collapsed && "collapsed"
-      )}
-    >
-
-
+    <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
       <div className="sidebar-brand">
-
-
-        {!collapsed ? (
-
+        {!collapsed && (
           <div className="brand-mark">
-
             <div className="brand-logo">
-
-              <Sparkles
-                size={18}
-                strokeWidth={2.5}
-              />
-
+              <Sparkles size={18} strokeWidth={2.5} />
             </div>
-
-
             <div>
-
-              <div>
-                نوا مارکت
-              </div>
-
-
-              <div className="brand-subtitle">
+              <div>نوا مارکت</div>
+              <div style={{ fontSize: 10, color: "var(--muted)", fontWeight: 500, marginTop: 1 }}>
                 پنل مدیریت
               </div>
-
             </div>
-
           </div>
-
-
-        ) : (
-
-          <div className="brand-logo collapsed-logo">
-
-            <Sparkles
-              size={18}
-              strokeWidth={2.5}
-            />
-
-          </div>
-
         )}
-
-
-
+        {collapsed && (
+          <div className="brand-logo" style={{ margin: "0 auto" }}>
+            <Sparkles size={18} strokeWidth={2.5} />
+          </div>
+        )}
         <button
-          className={cn(
-            "collapse-btn",
-            collapsed && "rotate"
-          )}
-
-          onClick={() =>
-            setCollapsed(prev => !prev)
-          }
+          className="collapse-btn"
+          onClick={() => setCollapsed(!collapsed)}
+          aria-label="جمع کردن منو"
+          style={{ transform: collapsed ? "rotate(180deg)" : "none" }}
         >
-
-          <ChevronLeft size={14}/>
-
+          <ChevronLeft size={14} />
         </button>
-
-
       </div>
 
-
-
       <nav className="sidebar-nav">
+        {!collapsed && <div className="nav-section-label">اصلی</div>}
+        {mainNavItems.map(renderItem)}
 
+        {!collapsed && <div className="nav-section-label">بیشتر</div>}
+        {extraNavItems.map(renderItem)}
 
-        {!collapsed && (
-          <div className="nav-section-label">
-            اصلی
-          </div>
-        )}
-
-
-        {mainItems.map(renderItem)}
-
-
-
-        {!collapsed && (
-          <div className="nav-section-label">
-            بیشتر
-          </div>
-        )}
-
-
-        {extraItems.map(renderItem)}
-
-
-
-        {!collapsed && (
-          <div className="nav-section-label">
-            حساب کاربری
-          </div>
-        )}
-
-
-
-        <div
-          className={cn(
-            "nav-item",
-            "logout"
-          )}
-        >
-
-          <LogOut
-            size={18}
-            className="nav-icon"
-          />
-
-
-          {!collapsed && (
-            <span className="nav-label">
-              خروج
-            </span>
-          )}
-
+        {!collapsed && <div className="nav-section-label">حساب کاربری</div>}
+        <div className="nav-item" style={{ color: "#d63b48", cursor: "pointer" }}>
+          <LogOut size={18} className="nav-icon" style={{ color: "var(--danger)" }} />
+          {!collapsed && <span className="nav-label">خروج</span>}
         </div>
-
-
       </nav>
 
-
-
-
       {!collapsed && (
-
         <div className="sidebar-footer">
-
           <div className="upgrade-card">
-
-            <div className="upgrade-title">
-              🚀 نسخه حرفه‌ای
-            </div>
-
-
-            <div className="upgrade-desc">
-              به امکانات پیشرفته دسترسی پیدا کنید
-            </div>
-
-
-            <button className="upgrade-btn">
-              ارتقای حساب
-            </button>
-
-
+            <div className="upgrade-title">🚀 نسخه حرفه‌ای</div>
+            <div className="upgrade-desc">به امکانات پیشرفته دسترسی پیدا کنید</div>
+            <button className="upgrade-btn">ارتقای حساب</button>
           </div>
-
         </div>
-
       )}
-
-
-
     </aside>
-
   );
 }

@@ -1,4 +1,4 @@
-import ToggleSwitch from "@/components/ui/ToggleSwitch";
+import ToggleSwitch from "@/components/admin/ui/ToggleSwitch";
 import { useTheme } from "@/components/admin/ThemeProvider";
 
 export default function GeneralSettingsSection() {

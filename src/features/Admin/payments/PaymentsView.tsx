@@ -1,5 +1,5 @@
 import { Download } from "lucide-react";
-import PageHeader from "@/components/ui/PageHeader";
+import PageHeader from "@/components/admin/ui/PageHeader";
 import PaymentsKpiRow from "./PaymentsKpiRow";
 import PaymentsTable from "./PaymentsTable";
 import type { Payment } from "@/constants/types";

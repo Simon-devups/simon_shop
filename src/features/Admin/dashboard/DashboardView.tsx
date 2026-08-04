@@ -7,6 +7,7 @@ import TopProductsCard from "./TopProductsCard";
 import RecentOrdersTable from "./RecentOrdersTable";
 import ActivityTimeline from "./ActivityTimeline";
 import type { SalesDataPoint, MonthlyDataPoint, CategoryDatum, TopProduct, RecentOrder } from "@/constants/types";
+import { DashboardKpis } from "@/lib/Admin/orders/dashboard";
 
 interface DashboardViewProps {
   salesData: SalesDataPoint[];
@@ -14,6 +15,7 @@ interface DashboardViewProps {
   categoryData: CategoryDatum[];
   topProducts: TopProduct[];
   recentOrders: RecentOrder[];
+  kpis: DashboardKpis;
 }
 
 export default function DashboardView({
@@ -22,11 +24,12 @@ export default function DashboardView({
   categoryData,
   topProducts,
   recentOrders,
+  kpis
 }: DashboardViewProps) {
   return (
     <div>
       <Greeting />
-      <DashboardKpiGrid />
+      <DashboardKpiGrid kpis={kpis} />
 
       <div className="grid-2 fade-up d3">
         <WeeklySalesChart data={salesData} />

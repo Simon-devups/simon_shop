@@ -1,5 +1,5 @@
 import { MessageSquare, Clock, CheckCircle2, XCircle } from "lucide-react";
-import KpiCard from "@/components/ui/KpiCard";
+import KpiCard from "@/components/admin/ui/KpiCard";
 import { formatPrice } from "@/lib/utils";
 import type { ProductComment } from "@/constants/types";
 

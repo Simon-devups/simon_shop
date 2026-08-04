@@ -1,5 +1,5 @@
 import { CreditCard, CheckCircle2, Clock, XCircle } from "lucide-react";
-import KpiCard from "@/components/ui/KpiCard";
+import KpiCard from "@/components/admin/ui/KpiCard";
 import { formatPrice } from "@/lib/utils";
 import type { Payment } from "@/constants/types";
 

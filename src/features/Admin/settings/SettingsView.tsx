@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { User, Store, CreditCard, ShieldCheck, Bell, Save } from "lucide-react";
-import PageHeader from "@/components/ui/PageHeader";
-import VerticalTabs, { type VerticalTabItem } from "@/components/ui/VerticalTabs";
+import PageHeader from "@/components/admin/ui/PageHeader";
+import VerticalTabs, { type VerticalTabItem } from "@/components/admin/ui/VerticalTabs";
 import GeneralSettingsSection from "./GeneralSettingsSection";
 import ShopSettingsSection from "./ShopSettingsSection";
 import PaymentSettingsSection from "./PaymentSettingsSection";
