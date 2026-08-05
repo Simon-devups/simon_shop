@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Vazirmatn } from "next/font/google";
 import "@/app/(client)/globals.css";
 import Footer from "@/components/client/Footer";
-import Navbar from "@/components/client/Navbar";
+import { Navbar } from "@/components/client/Navbar";
 
 const vazir = Vazirmatn({
   subsets: ["arabic"],

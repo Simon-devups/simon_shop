@@ -14,24 +14,7 @@
   --color-warning: #ffa502;
   --color-danger: #ff4757;
 }
-@layer base {
-  * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    outline: none;
-    font-family: "vazirmatn", sans-serif;
-  }
 
-  a {
-    text-decoration-line: unset;
-  }
-
-  #root {
-    position: relative;
-    height: 100%;
-  }
-}
 * {
   font-family: var(--font-vazirmatn), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;

@@ -232,13 +232,13 @@ a {
 /* indexCss file */
 @import "tailwindcss";
 
-@theme {
+/* @theme {
   --font-sans: "Vazirmatn", system-ui, sans-serif;
   --color-bg: #E8EDF2;
   --color-ink: #2C3947;
   --color-accent: #547A95;
   --color-gold: #C2A56D;
-}
+} */
 
 * {
   font-family: "Vazirmatn", system-ui, -apple-system, sans-serif;
