@@ -126,18 +126,7 @@ const Stars = ({ value, size = 14 }) => (
 /*  HEADER                                                             */
 /* ------------------------------------------------------------------ */
 
-export function PromoRibbon() {
-  return (
-    <div className="bg-[#1D4ED8] text-white text-[13px] py-2">
-      <div className="max-w-[1600px] mx-auto px-6 flex items-center justify-center gap-3">
-        <span>جشنواره تابستانه؛ تا ۴۰٪ تخفیف روی محصولات اپل</span>
-        <button className="bg-white/15 hover:bg-white/25 transition-colors duration-150 ease-out rounded-full px-3 py-0.5 text-xs font-medium">
-          مشاهده جشنواره
-        </button>
-      </div>
-    </div>
-  );
-}
+
 
 
 function Breadcrumb() {
@@ -163,7 +152,7 @@ function ProductGallery() {
   const [zoom, setZoom] = useState(false);
 
   return (
-    <Card className="p-5">
+    <Card className="p-5" children={undefined} style={undefined}>
       <div
         className="relative w-full aspect-square bg-[#F5F7FA] rounded-[12px] overflow-hidden group cursor-zoom-in"
         onMouseEnter={() => setZoom(true)}
@@ -213,7 +202,7 @@ function ProductGallery() {
 
 function ProductInfo({ color, setColor, storage, setStorage }) {
   return (
-    <Card className="p-6">
+    <Card className="p-6" children={undefined} style={undefined}>
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs bg-[#EFF4FE] text-[#1D4ED8] rounded-full px-2.5 py-1 font-medium">{PRODUCT.brand}</span>
         <button className="text-[#6B7280] hover:text-[#EF4444] transition-colors duration-150 ease-out">
@@ -362,7 +351,7 @@ function ProductPriceCard() {
         </button>
       </Card>
 
-      <Card className="p-4 mt-4">
+      <Card className="p-4 mt-4" children={undefined} style={undefined}>
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-full bg-[#EFF4FE] flex items-center justify-center text-[#1D4ED8] font-bold text-sm shrink-0">اپ</div>
           <div className="flex-1 min-w-0">
@@ -408,7 +397,7 @@ function SpecificationTable() {
 function ProsCons() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden" children={undefined} style={undefined}>
         <div className="bg-[#EAFBF0] text-[#22C55E] font-bold text-[13px] px-4 py-2.5 border-b border-[#E5E7EB]">نقاط قوت</div>
         <ul className="p-4 space-y-2.5">
           {PROS.map((p) => (
@@ -418,7 +407,7 @@ function ProsCons() {
           ))}
         </ul>
       </Card>
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden" children={undefined} style={undefined}>
         <div className="bg-[#FDECEC] text-[#EF4444] font-bold text-[13px] px-4 py-2.5 border-b border-[#E5E7EB]">نقاط ضعف</div>
         <ul className="p-4 space-y-2.5">
           {CONS.map((c) => (
@@ -545,7 +534,7 @@ function ProductTabs() {
   const [active, setActive] = useState("desc");
 
   return (
-    <Card className="p-6">
+    <Card className="p-6" children={undefined} style={undefined}>
       <div className="flex items-center gap-1 border-b border-[#E5E7EB] mb-6 overflow-x-auto">
         {tabs.map((t) => (
           <button

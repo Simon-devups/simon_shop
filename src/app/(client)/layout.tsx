@@ -3,6 +3,8 @@ import { Vazirmatn } from "next/font/google";
 import "@/app/(client)/globals.css";
 import Footer from "@/components/client/Footer";
 import { Navbar } from "@/components/client/Navbar";
+import { Suspense } from "react";
+import { CartProvider } from "@/context/CartContext";
 
 const vazir = Vazirmatn({
   subsets: ["arabic"],
@@ -22,10 +24,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fa" dir="rtl" className={vazir.variable}>
-      <body className="min-h-screen bg-[#E8EDF2] font-sans antialiased">
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+      <body className="min-h-screen bg-[#F5F7FA] font-sans antialiased">
+        <CartProvider>
+          <Suspense fallback={null}>
+            <Navbar />
+          </Suspense>
+          <main>{children}</main>
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );

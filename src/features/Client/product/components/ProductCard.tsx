@@ -1,26 +1,58 @@
-import { Heart, Plus, Star } from "lucide-react";
-import { ProductCardType } from "../types";
+import { useState } from "react";
+import Link from "next/link";
+import { Check, Heart, Plus, Star } from "lucide-react";
+import type { Product } from "@/lib/client/api";
+import { useCart } from "@/context/CartContext";
 
-export function ProductCard({ product }: { product: ProductCardType }) {
+type Props = {
+  product: Product;
+  /** اگه پاس داده بشه، به‌جای افزودن مستقیم به CartContext صدا زده می‌شه. */
+  onAdd?: (product: Product) => void;
+  onWishlist?: (product: Product) => void;
+  /** برای سازگاری با فراخوانی‌های قدیمی؛ فعلاً بدون اثر بصری خاص. */
+  variant?: string;
+};
+
+export function ProductCard({ product, onAdd, onWishlist }: Props) {
+  const { add } = useCart();
+  const [added, setAdded] = useState(false);
+
+  const handleAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onAdd) {
+      onAdd(product);
+    } else {
+      add(product);
+    }
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1200);
+  };
+
   return (
-    <article
+    <Link
+      href={`/product/${product.slug}`}
       className="group relative flex h-full flex-col overflow-hidden rounded-[16px] border border-[#E5E7EB] bg-white transition-shadow duration-200 ease-out hover:shadow-[0_18px_60px_rgba(0,0,0,0.12)]"
       style={{ boxShadow: "0 8px 30px rgba(0,0,0,.06)" }}
     >
       {/* Media */}
       <div className="relative aspect-[4/3] overflow-hidden bg-[#F5F7FA]">
-        <div className="absolute inset-0 grid place-items-center">
-          <div className="h-24 w-14 rounded-[12px] border border-[#E5E7EB] bg-white" />
-        </div>
+        <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
 
-        {/* Badge */}
-        <span className="absolute right-4 top-4 rounded-[8px] bg-[#1D4ED8] px-2.5 py-1 text-[11px] font-bold text-white">
-          پرفروش
-        </span>
+        {product.oldPrice && product.oldPrice > product.price ? (
+          <span className="absolute right-4 top-4 rounded-[8px] bg-[#1D4ED8] px-2.5 py-1 text-[11px] font-bold text-white">
+            پرفروش
+          </span>
+        ) : null}
 
         {/* Wishlist */}
         <button
           type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onWishlist?.(product);
+          }}
           className="absolute left-4 top-4 grid h-9 w-9 place-items-center rounded-[12px] border border-[#E5E7EB] bg-white text-[#374151] transition-colors duration-150 ease-out hover:text-[#1D4ED8]"
           aria-label="افزودن به علاقه‌مندی‌ها"
         >
@@ -34,21 +66,9 @@ export function ProductCard({ product }: { product: ProductCardType }) {
           {product.category.name}
         </div>
 
-        <h3 className="mb-3 line-clamp-2 min-h-[2.6em] cursor-pointer text-[14px] font-semibold leading-relaxed text-[#111827] transition-colors duration-150 ease-out hover:text-[#1D4ED8]">
+        <h3 className="mb-3 line-clamp-2 min-h-[2.6em] text-[14px] font-semibold leading-relaxed text-[#111827] transition-colors duration-150 ease-out group-hover:text-[#1D4ED8]">
           {product.name}
         </h3>
-
-        {/* Chips */}
-        <div className="mb-3 flex flex-wrap gap-1.5">
-          {["نمایشگر ۶.۷ اینچ OLED", "5G", "۲۵۶ گیگ"].map((chip) => (
-            <span
-              key={chip}
-              className="rounded-[8px] bg-[#F5F7FA] px-2 py-1 text-[11px] font-medium text-[#374151]"
-            >
-              {chip}
-            </span>
-          ))}
-        </div>
 
         {/* Rating */}
         <div className="mb-4 flex items-center gap-1.5">
@@ -61,17 +81,20 @@ export function ProductCard({ product }: { product: ProductCardType }) {
         {/* Footer */}
         <div className="mt-auto flex items-center justify-between gap-2">
           <span className="text-[16px] font-bold tracking-tight text-[#111827]">
-            ۳۹٬۹۰۰٬۰۰۰ تومان
+            {product.price.toLocaleString("fa-IR")} تومان
           </span>
           <button
             type="button"
-            className="grid h-9 w-9 place-items-center rounded-[12px] bg-[#1D4ED8] text-white transition-colors duration-150 ease-out hover:bg-[#1E40AF]"
-            aria-label="افزودن به سبد خرید"
+            onClick={handleAdd}
+            className={`grid h-9 w-9 place-items-center rounded-[12px] text-white transition-colors duration-150 ease-out ${
+              added ? "bg-[#22C55E]" : "bg-[#1D4ED8] hover:bg-[#1E40AF]"
+            }`}
+            aria-label="افزودن به سبد"
           >
-            <Plus size={18} strokeWidth={2} />
+            {added ? <Check size={18} strokeWidth={2.5} /> : <Plus size={18} strokeWidth={2} />}
           </button>
         </div>
       </div>
-    </article>
+    </Link>
   );
 }

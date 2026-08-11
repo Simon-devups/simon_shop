@@ -1,10 +1,13 @@
 "use client"
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Search, SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight,
   Star, Heart, Plus, X, Check, ChevronUp,
 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+import { getSearchResults, type SearchProduct } from "@/lib/client/api";
 
 /* ------------------------------------------------------------------ */
 /*  DESIGN TOKENS — same values used across Navbar / ProductPage /     */
@@ -19,25 +22,12 @@ const SHADOW = {
 };
 
 /* ------------------------------------------------------------------ */
-/*  MOCK DATA — replace with a React Query hook (e.g. useSearchProducts)*/
+/*  MOCK DATA — used ONLY as a fallback when the real API isn't up     */
+/*  yet, is unreachable, or returns something unexpected. Once the     */
+/*  backend is stable this block can be deleted entirely.              */
 /* ------------------------------------------------------------------ */
 
-type SearchProduct = {
-  id: string;
-  name: string;
-  category: string;
-  brand: string;
-  price: number;
-  oldPrice?: number;
-  rating: number;
-  reviewCount: number;
-  image: string;
-  isBestseller?: boolean;
-};
-
-const QUERY = "آیفون";
-
-const RESULTS: SearchProduct[] = [
+const MOCK_RESULTS: SearchProduct[] = [
   { id: "1", name: "گوشی موبایل اپل مدل iPhone 15 Pro Max ظرفیت ۲۵۶ گیگابایت", category: "موبایل", brand: "اپل", price: 74500000, oldPrice: 89900000, rating: 4.7, reviewCount: 1284, image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=500&q=80", isBestseller: true },
   { id: "2", name: "گوشی موبایل اپل مدل iPhone 15 ظرفیت ۱۲۸ گیگابایت", category: "موبایل", brand: "اپل", price: 42900000, oldPrice: 47900000, rating: 4.6, reviewCount: 872, image: "https://images.unsplash.com/photo-1592286927505-1def25115558?w=500&q=80" },
   { id: "3", name: "گوشی موبایل اپل مدل iPhone 14 Pro ظرفیت ۲۵۶ گیگابایت", category: "موبایل", brand: "اپل", price: 58900000, rating: 4.5, reviewCount: 634, image: "https://images.unsplash.com/photo-1663499482523-1c0c1bae4ce1?w=500&q=80" },
@@ -52,6 +42,20 @@ const CATEGORIES = ["موبایل", "لوازم جانبی", "صوتی", "پوش
 const BRANDS = ["اپل", "سامسونگ", "شیائومی", "بی‌نام"];
 
 const fmt = (n: number) => n.toLocaleString("fa-IR");
+
+type FilterState = {
+  categories: string[];
+  brands: string[];
+  priceRange: [number, number];
+  minRating: number;
+};
+
+const DEFAULT_FILTERS: FilterState = {
+  categories: [],
+  brands: [],
+  priceRange: [0, 100000000],
+  minRating: 0,
+};
 
 /* ------------------------------------------------------------------ */
 /*  ATOMS                                                              */
@@ -121,6 +125,10 @@ function Breadcrumb({ query }: { query: string }) {
 
 /* ------------------------------------------------------------------ */
 /*  FILTERS SIDEBAR                                                    */
+/*  NOTE: all controls here only edit the DRAFT filter state. Nothing  */
+/*  is fetched until the person presses "اعمال فیلتر". The button is   */
+/*  disabled when the draft matches what's already applied, and shows  */
+/*  a small dot when there are unapplied changes waiting.              */
 /* ------------------------------------------------------------------ */
 
 function FilterSection({ title, children, defaultOpen = true }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
@@ -141,16 +149,19 @@ function FilterSection({ title, children, defaultOpen = true }: { title: string;
 }
 
 function FiltersPanel({
-  categories, setCategories, brands, setBrands, priceRange, setPriceRange, minRating, setMinRating, onReset,
+  draft, setDraft, isDirty, onApply, onReset,
 }: {
-  categories: string[]; setCategories: (v: string[]) => void;
-  brands: string[]; setBrands: (v: string[]) => void;
-  priceRange: [number, number]; setPriceRange: (v: [number, number]) => void;
-  minRating: number; setMinRating: (v: number) => void;
+  draft: FilterState;
+  setDraft: React.Dispatch<React.SetStateAction<FilterState>>;
+  isDirty: boolean;
+  onApply: () => void;
   onReset: () => void;
 }) {
-  const toggle = (list: string[], set: (v: string[]) => void, value: string) =>
-    set(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
+  const toggle = (key: "categories" | "brands", value: string) =>
+    setDraft((d) => ({
+      ...d,
+      [key]: d[key].includes(value) ? d[key].filter((v) => v !== value) : [...d[key], value],
+    }));
 
   return (
     <Card className="p-5">
@@ -167,7 +178,7 @@ function FiltersPanel({
       <FilterSection title="دسته‌بندی">
         <div className="space-y-0.5">
           {CATEGORIES.map((c) => (
-            <Checkbox key={c} label={c} checked={categories.includes(c)} onChange={() => toggle(categories, setCategories, c)} />
+            <Checkbox key={c} label={c} checked={draft.categories.includes(c)} onChange={() => toggle("categories", c)} />
           ))}
         </div>
       </FilterSection>
@@ -175,7 +186,7 @@ function FiltersPanel({
       <FilterSection title="برند">
         <div className="space-y-0.5">
           {BRANDS.map((b) => (
-            <Checkbox key={b} label={b} checked={brands.includes(b)} onChange={() => toggle(brands, setBrands, b)} />
+            <Checkbox key={b} label={b} checked={draft.brands.includes(b)} onChange={() => toggle("brands", b)} />
           ))}
         </div>
       </FilterSection>
@@ -187,13 +198,13 @@ function FiltersPanel({
             min={0}
             max={100000000}
             step={500000}
-            value={priceRange[1]}
-            onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+            value={draft.priceRange[1]}
+            onChange={(e) => setDraft((d) => ({ ...d, priceRange: [d.priceRange[0], Number(e.target.value)] }))}
             className="w-full accent-[#1D4ED8]"
           />
           <div className="flex items-center justify-between text-[11px] text-[#6B7280]">
-            <span className="num">{fmt(priceRange[0])} تومان</span>
-            <span className="num">{fmt(priceRange[1])} تومان</span>
+            <span className="num">{fmt(draft.priceRange[0])} تومان</span>
+            <span className="num">{fmt(draft.priceRange[1])} تومان</span>
           </div>
         </div>
       </FilterSection>
@@ -204,9 +215,9 @@ function FiltersPanel({
             <button
               key={r}
               type="button"
-              onClick={() => setMinRating(minRating === r ? 0 : r)}
+              onClick={() => setDraft((d) => ({ ...d, minRating: d.minRating === r ? 0 : r }))}
               className={`flex items-center gap-2 rounded-[8px] px-2 py-1.5 text-[12px] transition-colors duration-150 ease-out ${
-                minRating === r ? "bg-[#EFF4FE] text-[#1D4ED8]" : "text-[#374151] hover:bg-[#F5F7FA]"
+                draft.minRating === r ? "bg-[#EFF4FE] text-[#1D4ED8]" : "text-[#374151] hover:bg-[#F5F7FA]"
               }`}
             >
               <Stars value={r} size={12} />
@@ -215,6 +226,19 @@ function FiltersPanel({
           ))}
         </div>
       </FilterSection>
+
+      {/* Nothing above triggers a fetch — only this button does. */}
+      <button
+        type="button"
+        onClick={onApply}
+        className="relative mt-2 w-full py-3 text-[13.5px] font-bold text-white transition-colors duration-150 ease-out hover:bg-[#1E40AF]"
+        style={{ borderRadius: RADIUS.md, background: "#1D4ED8" }}
+      >
+        اعمال فیلتر
+        {isDirty && (
+          <span className="absolute left-3 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-[#F59E0B]" />
+        )}
+      </button>
     </Card>
   );
 }
@@ -224,8 +248,18 @@ function FiltersPanel({
 /*  ProductCard (radius/shadow/spacing/colors identical).              */
 /* ------------------------------------------------------------------ */
 
-function ResultCard({ product }: { product: SearchProduct }) {
+function ResultCard({ product, onAdd }: { product: SearchProduct; onAdd?: (product: SearchProduct) => void }) {
   const [wish, setWish] = useState(false);
+  const [added, setAdded] = useState(false);
+
+  const handleAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onAdd?.(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1200);
+  };
+
   return (
     <article
       className="group relative flex h-full cursor-pointer flex-col overflow-hidden border border-[#E5E7EB] bg-white transition-all duration-200 ease-out hover:-translate-y-1"
@@ -281,14 +315,14 @@ function ResultCard({ product }: { product: SearchProduct }) {
           </div>
           <button
             type="button"
-            onClick={(e) => e.stopPropagation()}
+            onClick={handleAdd}
             aria-label="افزودن به سبد خرید"
-            className="grid h-9 w-9 shrink-0 place-items-center text-white transition-all duration-150 ease-out hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+            className={`grid h-9 w-9 shrink-0 place-items-center text-white transition-all duration-150 ease-out hover:-translate-y-0.5 active:translate-y-0 active:scale-95 ${added ? "!bg-[#22C55E]" : ""}`}
             style={{ borderRadius: RADIUS.md, background: "#1D4ED8", boxShadow: "0 4px 12px rgba(29,78,216,.25)" }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "#1E40AF")}
-            onMouseLeaveCapture={(e) => (e.currentTarget.style.background = "#1D4ED8")}
+            onMouseEnter={(e) => !added && (e.currentTarget.style.background = "#1E40AF")}
+            onMouseLeaveCapture={(e) => !added && (e.currentTarget.style.background = "#1D4ED8")}
           >
-            <Plus size={16} strokeWidth={2} />
+            {added ? <Check size={16} strokeWidth={2.5} /> : <Plus size={16} strokeWidth={2} />}
           </button>
         </div>
       </div>
@@ -297,7 +331,9 @@ function ResultCard({ product }: { product: SearchProduct }) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  SORT DROPDOWN                                                      */
+/*  SORT DROPDOWN — sorting is a single explicit click, so it still    */
+/*  applies immediately (there's nothing to "batch" with anything      */
+/*  else). Only the multi-field filters panel is gated behind Apply.   */
 /* ------------------------------------------------------------------ */
 
 const SORT_OPTIONS = [
@@ -310,7 +346,7 @@ const SORT_OPTIONS = [
 
 function SortDropdown({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const [open, setOpen] = useState(false);
-  const current = SORT_OPTIONS.find((o) => o.key === value)!;
+  const current = SORT_OPTIONS.find((o) => o.key === value) ?? SORT_OPTIONS[0];
   return (
     <div className="relative">
       <button
@@ -350,7 +386,16 @@ function SortDropdown({ value, onChange }: { value: string; onChange: (v: string
 /*  MOBILE FILTER DRAWER                                               */
 /* ------------------------------------------------------------------ */
 
-function MobileFilterDrawer({ open, onClose, ...filterProps }: any) {
+function MobileFilterDrawer({
+  open, onClose, draft, setDraft, isDirty, onApply,
+}: {
+  open: boolean;
+  onClose: () => void;
+  draft: FilterState;
+  setDraft: React.Dispatch<React.SetStateAction<FilterState>>;
+  isDirty: boolean;
+  onApply: () => void;
+}) {
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 lg:hidden">
@@ -365,15 +410,16 @@ function MobileFilterDrawer({ open, onClose, ...filterProps }: any) {
             <X size={18} strokeWidth={2} />
           </button>
         </div>
-        <FiltersPanel {...filterProps} />
-        <button
-          type="button"
-          onClick={onClose}
-          className="mt-4 w-full py-3.5 text-[14px] font-extrabold text-white transition-colors duration-150 ease-out"
-          style={{ borderRadius: RADIUS.md, background: "#1D4ED8" }}
-        >
-          اعمال فیلتر
-        </button>
+        <FiltersPanel
+          draft={draft}
+          setDraft={setDraft}
+          isDirty={isDirty}
+          onReset={() => setDraft(DEFAULT_FILTERS)}
+          onApply={() => {
+            onApply();
+            onClose();
+          }}
+        />
       </div>
     </div>
   );
@@ -384,6 +430,7 @@ function MobileFilterDrawer({ open, onClose, ...filterProps }: any) {
 /* ------------------------------------------------------------------ */
 
 function Pagination({ page, total, onChange }: { page: number; total: number; onChange: (p: number) => void }) {
+  const safeTotal = Math.max(1, total || 1);
   return (
     <div className="mt-8 flex items-center justify-center gap-2">
       <button
@@ -394,7 +441,7 @@ function Pagination({ page, total, onChange }: { page: number; total: number; on
       >
         <ChevronRight size={16} strokeWidth={2} />
       </button>
-      {Array.from({ length: total }, (_, i) => i + 1).map((p) => (
+      {Array.from({ length: safeTotal }, (_, i) => i + 1).map((p) => (
         <button
           key={p}
           type="button"
@@ -411,7 +458,7 @@ function Pagination({ page, total, onChange }: { page: number; total: number; on
       ))}
       <button
         type="button"
-        onClick={() => onChange(Math.min(total, page + 1))}
+        onClick={() => onChange(Math.min(safeTotal, page + 1))}
         className="grid h-9 w-9 place-items-center border border-[#E5E7EB] text-[#374151] transition-colors duration-150 ease-out hover:bg-[#F5F7FA]"
         style={{ borderRadius: RADIUS.sm }}
       >
@@ -443,38 +490,136 @@ function EmptyState({ query }: { query: string }) {
 /*  PAGE ROOT                                                          */
 /* ------------------------------------------------------------------ */
 
-export default function SearchPage() {
-  const [query] = useState(QUERY);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [brands, setBrands] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000000]);
-  const [minRating, setMinRating] = useState(0);
-  const [sort, setSort] = useState("relevance");
+const PAGE_SIZE = 8;
+
+function SearchResults() {
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q") ?? "";
+
+  // DRAFT — what the person is currently clicking/dragging in the panel.
+  // Nothing is fetched off of this directly.
+  const [draft, setDraft] = useState<FilterState>(DEFAULT_FILTERS);
+
+  // APPLIED — the filter state actually used for fetching. Only changes
+  // when "اعمال فیلتر" is pressed (or "حذف همه" resets both at once).
+  const [applied, setApplied] = useState<FilterState>(DEFAULT_FILTERS);
+
+  const [sort, setSort] = useState<"relevance" | "cheapest" | "expensive" | "newest" | "rating">("relevance");
   const [page, setPage] = useState(1);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const filtered = useMemo(() => {
-    let list = RESULTS.filter((p) => {
-      if (categories.length && !categories.includes(p.category)) return false;
-      if (brands.length && !brands.includes(p.brand)) return false;
-      if (p.price > priceRange[1]) return false;
-      if (minRating && p.rating < minRating) return false;
+  const isDirty = useMemo(() => JSON.stringify(draft) !== JSON.stringify(applied), [draft, applied]);
+
+  const applyFilters = () => {
+    setApplied(draft);
+    setPage(1);
+  };
+
+  const resetFilters = () => {
+    setDraft(DEFAULT_FILTERS);
+    setApplied(DEFAULT_FILTERS);
+    setPage(1);
+  };
+
+  // نتایج واقعی از API. تا وقتی لود نشده یا خطا خورده، null می‌مونه
+  // و ما به‌جاش از فیلتر محلی روی MOCK_RESULTS استفاده می‌کنیم.
+  const [apiResults, setApiResults] = useState<SearchProduct[] | null>(null);
+  const [apiTotal, setApiTotal] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [usedFallback, setUsedFallback] = useState(false);
+
+  // Fetch only depends on APPLIED filters (+ query/sort/page) — never on draft,
+  // so typing/checking boxes never triggers a request on its own.
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+
+    getSearchResults({
+      query,
+      categories: applied.categories,
+      brands: applied.brands,
+      maxPrice: applied.priceRange[1],
+      minRating: applied.minRating || undefined,
+      sort,
+      page,
+      pageSize: PAGE_SIZE,
+    })
+      .then((res) => {
+        if (cancelled) return;
+        if (!res || !Array.isArray(res.products)) {
+          throw new Error("Invalid search response shape");
+        }
+        setApiResults(res.products);
+        setApiTotal(res.total ?? res.products.length);
+        setUsedFallback(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setApiResults(null);
+        setApiTotal(null);
+        setUsedFallback(true);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [query, applied, sort, page]);
+
+  // فیلتر محلی روی mock — فقط وقتی استفاده میشه که apiResults نداریم،
+  // و این هم فقط روی applied کار می‌کنه نه draft. این لیست کامل (فیلترشده و
+  // مرتب‌شده) هست؛ صفحه‌بندی واقعی‌اش پایین‌تر با slice انجام می‌شه.
+  const filteredMock = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    let list = MOCK_RESULTS.filter((p) => {
+      if (q && !p.name.toLowerCase().includes(q) && !p.brand.toLowerCase().includes(q) && !p.category.toLowerCase().includes(q)) return false;
+      if (applied.categories.length && !applied.categories.includes(p.category)) return false;
+      if (applied.brands.length && !applied.brands.includes(p.brand)) return false;
+      if (p.price > applied.priceRange[1]) return false;
+      if (applied.minRating && p.rating < applied.minRating) return false;
       return true;
     });
     if (sort === "cheapest") list = [...list].sort((a, b) => a.price - b.price);
     if (sort === "expensive") list = [...list].sort((a, b) => b.price - a.price);
     if (sort === "rating") list = [...list].sort((a, b) => b.reviewCount - a.reviewCount);
     return list;
-  }, [categories, brands, priceRange, minRating, sort]);
+  }, [query, applied, sort]);
 
-  const resetFilters = () => {
-    setCategories([]);
-    setBrands([]);
-    setPriceRange([0, 100000000]);
-    setMinRating(0);
+  // Total pages: from the API's own count when we have real results,
+  // otherwise derived from however many mock items actually matched —
+  // never a hardcoded guess.
+  const mockTotalPages = Math.max(1, Math.ceil(filteredMock.length / PAGE_SIZE));
+  const totalPages = apiTotal !== null ? Math.max(1, Math.ceil(apiTotal / PAGE_SIZE)) : mockTotalPages;
+
+  // If filters/sort/query changed and shrank the result set, don't strand
+  // the person on a page that no longer exists.
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [totalPages, page]);
+
+  // The API already returns one page at a time, but the mock fallback holds
+  // the FULL filtered list — so it needs its own slice per page.
+  const paginatedMock = useMemo(
+    () => filteredMock.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [filteredMock, page]
+  );
+
+  const results = apiResults ?? paginatedMock;
+
+  const [cart, setCart] = useState<SearchProduct[]>([]);
+  const handleAdd = (product: SearchProduct) => {
+    setCart((prev) => [...prev, product]);
   };
 
-  const filterProps = { categories, setCategories, brands, setBrands, priceRange, setPriceRange, minRating, setMinRating, onReset: resetFilters };
+  const resultsTopRef = useRef<HTMLDivElement | null>(null);
+  const goToPage = (p: number) => {
+    setPage(p);
+    resultsTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const filterPanelProps = { draft, setDraft, isDirty, onApply: applyFilters, onReset: resetFilters };
 
   return (
     <div dir="rtl" className="min-h-screen bg-[#F5F7FA]" style={{ fontFamily: "'Vazirmatn', 'Tahoma', sans-serif" }}>
@@ -484,27 +629,34 @@ export default function SearchPage() {
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
             <h1 className="text-[19px] font-extrabold text-[#111827]">نتایج جستجو برای «{query}»</h1>
-            <p className="num mt-1 text-[12.5px] text-[#6B7280]">{fmt(filtered.length)} کالا پیدا شد</p>
+            <p className="num mt-1 text-[12.5px] text-[#6B7280]">
+              {fmt(apiTotal ?? results.length)} کالا پیدا شد
+              {usedFallback && (
+                <span className="mr-2 text-[#9CA3AF]">(نمایش داده‌ی نمونه — اتصال به سرور برقرار نشد)</span>
+              )}
+            </p>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setDrawerOpen(true)}
-              className="flex items-center gap-1.5 border border-[#E5E7EB] bg-white px-3.5 py-2.5 text-[12.5px] font-semibold text-[#374151] transition-colors duration-150 ease-out hover:border-[#1D4ED8] lg:hidden"
+              className="relative flex items-center gap-1.5 border border-[#E5E7EB] bg-white px-3.5 py-2.5 text-[12.5px] font-semibold text-[#374151] transition-colors duration-150 ease-out hover:border-[#1D4ED8] lg:hidden"
               style={{ borderRadius: RADIUS.md }}
             >
               <SlidersHorizontal size={15} strokeWidth={2} />
               فیلترها
+              {isDirty && <span className="absolute -left-1 -top-1 h-2 w-2 rounded-full bg-[#F59E0B]" />}
             </button>
-            <SortDropdown value={sort} onChange={setSort} />
+            <SortDropdown value={sort} onChange={(v) => { setSort(v as typeof sort); setPage(1); }} />
           </div>
         </div>
 
-        {/* Active filter chips */}
-        {(categories.length > 0 || brands.length > 0 || minRating > 0) && (
+        {/* Active filter chips — reflect the APPLIED state, i.e. what the results
+            on screen actually match, not whatever is mid-edit in the panel. */}
+        {(applied.categories.length > 0 || applied.brands.length > 0 || applied.minRating > 0) && (
           <div className="mb-5 flex flex-wrap items-center gap-2">
-            {[...categories, ...brands, ...(minRating ? [`${minRating}+ امتیاز`] : [])].map((f) => (
+            {[...applied.categories, ...applied.brands, ...(applied.minRating ? [`${applied.minRating}+ امتیاز`] : [])].map((f) => (
               <span
                 key={f}
                 className="flex items-center gap-1.5 border border-[#E5E7EB] bg-white px-3 py-1.5 text-[11.5px] font-medium text-[#374151]"
@@ -521,27 +673,63 @@ export default function SearchPage() {
 
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[260px_1fr]">
           <aside className="sticky top-24 hidden lg:block">
-            <FiltersPanel {...filterProps} />
+            <FiltersPanel {...filterPanelProps} />
           </aside>
 
           <section>
-            {filtered.length === 0 ? (
+            <div ref={resultsTopRef} className="scroll-mt-24" />
+            {loading && results.length === 0 ? (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="aspect-square animate-pulse rounded-[16px] bg-[#E5E7EB]" />
+                ))}
+              </div>
+            ) : results.length === 0 ? (
               <EmptyState query={query} />
             ) : (
               <>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
-                  {filtered.map((p) => (
-                    <ResultCard key={p.id} product={p} />
+                  {results.map((p) => (
+                    <ResultCard key={p.id} product={p} onAdd={handleAdd} />
                   ))}
                 </div>
-                <Pagination page={page} total={3} onChange={setPage} />
+                <Pagination page={page} total={totalPages} onChange={goToPage} />
               </>
             )}
           </section>
         </div>
       </main>
 
-      <MobileFilterDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} {...filterProps} />
+      <MobileFilterDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} {...filterPanelProps} />
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  PAGE ROOT — wrapped in Suspense because SearchResults reads         */
+/*  useSearchParams(), which the App Router requires a Suspense         */
+/*  boundary around in client components.                               */
+/* ------------------------------------------------------------------ */
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<SearchPageSkeleton />}>
+      <SearchResults />
+    </Suspense>
+  );
+}
+
+function SearchPageSkeleton() {
+  return (
+    <div dir="rtl" className="min-h-screen bg-[#F5F7FA]" style={{ fontFamily: "'Vazirmatn', 'Tahoma', sans-serif" }}>
+      <div className="mx-auto max-w-[1600px] px-6 py-6">
+        <div className="mb-5 h-6 w-64 animate-pulse rounded-[8px] bg-[#E5E7EB]" />
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="aspect-square animate-pulse rounded-[16px] bg-[#E5E7EB]" />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
