@@ -10,6 +10,7 @@ type Props = {
   subtitle?: string;
   products?: Product[];
   viewAllHref?: string;
+  /** اختیاریه — اگه ندی، ProductCard خودش مستقیم به CartContext وصل می‌شه. */
   onAdd?: (product: Product) => void;
   onWishlist?: (product: Product) => void;
   // پشتیبانی از پراپ‌های قدیمی/جایگزین که ممکنه در صفحات دیگه استفاده شده باشن
@@ -21,32 +22,50 @@ type Props = {
  * داده‌ی موقت (Mock) — فقط تا وقتی سرور/API واقعی وصل بشه.
  * اگه products نیاد یا خالی/نامعتبر باشه از این استفاده می‌کنیم
  * تا صفحه کرش نکنه.
+ *
+ * ⚠️ نکته‌ی مهم: نسخه‌ی قبلی این آرایه فقط id/name/price/image داشت و با
+ * `as Product` تایپ‌اسکریپت رو مجبور می‌کرد ساکت باشه — ولی چون `slug` و
+ * `category` واقعاً وجود نداشتن، `ProductCard` وقتی می‌خواست به
+ * `/product/${product.slug}` لینک بده، نتیجه‌ش `/product/undefined` می‌شد.
+ * الان هر آیتم دقیقاً تمام فیلدهای اجباری Product رو داره، بدون type-cast.
  */
 const MOCK_PRODUCTS: Product[] = [
   {
     id: "mock-1",
+    slug: "sample-product-1",
     name: "محصول نمونه ۱",
     price: 1250000,
+    rating: 4.4,
     image: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=500&q=80",
-  } as Product,
+    category: { id: "sample", slug: "sample", name: "دسته‌ی نمونه" },
+  },
   {
     id: "mock-2",
+    slug: "sample-product-2",
     name: "محصول نمونه ۲",
     price: 890000,
+    rating: 4.2,
     image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80",
-  } as Product,
+    category: { id: "sample", slug: "sample", name: "دسته‌ی نمونه" },
+  },
   {
     id: "mock-3",
+    slug: "sample-product-3",
     name: "محصول نمونه ۳",
     price: 2450000,
+    rating: 4.7,
     image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80",
-  } as Product,
+    category: { id: "sample", slug: "sample", name: "دسته‌ی نمونه" },
+  },
   {
     id: "mock-4",
+    slug: "sample-product-4",
     name: "محصول نمونه ۴",
     price: 560000,
+    rating: 4.0,
     image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80",
-  } as Product,
+    category: { id: "sample", slug: "sample", name: "دسته‌ی نمونه" },
+  },
 ];
 
 export default function ProductGrid({
@@ -67,7 +86,10 @@ export default function ProductGrid({
   // href نهایی: اول viewAllHref، بعد onViewAll (اسم قدیمی)، در آخر یک مقدار پیش‌فرض امن
   const href = viewAllHref || onViewAll || "/products";
 
-  const handleAdd = onAdd ?? (() => {});
+  // نکته: اینجا دیگه fallback به () => {} نمی‌زنیم. اگه onAdd پاس داده نشده
+  // باشه، باید undefined بمونه تا ProductCard خودش تشخیص بده و از
+  // CartContext استفاده کنه — یه fallback نویس‌محور اینجا باعث می‌شد
+  // ProductCard همیشه فکر کنه "onAdd صریح دارم" و هیچوقت به Context نره.
   const handleWishlist = onWishlist ?? onSelect;
 
   return (
@@ -97,7 +119,7 @@ export default function ProductGrid({
           <ProductCard
             key={p.id}
             product={p}
-            onAdd={handleAdd}
+            onAdd={onAdd}
             onWishlist={handleWishlist}
           />
         ))}

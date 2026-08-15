@@ -1,7 +1,11 @@
-"use client"
-import { useState } from "react";
-import type { Product } from "../../data/store";
-import { amazingProducts } from "../../data/store";
+"use client";
+import { useEffect, useState } from "react";
+import type { Product, Category } from "@/lib/client/api";
+import { getCategoriesSafe, getProductsSafe } from "@/lib/client/api";
+import {
+  categories as mockCategories,
+  amazingProducts as mockProducts,
+} from "../../data/store";
 
 import AdCarousel from "@/components/client/AdCarousel";
 import Brands from "@/components/client/Brands";
@@ -9,12 +13,6 @@ import Categories from "@/components/client/Categories";
 import ProductGrid from "@/components/client/ProductGrid";
 import AmazingOffers from "@/components/client/AmazingOffers";
 import Hero from "@/components/client/Hero";
-
-// NOTE: در فایل data/store احتمالاً آرایه‌های دیگری هم برای
-// "جدیدترین‌ها" و "پرفروش‌ترین‌ها" وجود دارد (مثلاً newestProducts,
-// bestSellerProducts). فعلاً چون به من ارسال نشده بود، از همان
-// amazingProducts به‌عنوان placeholder برای دو گرید پایینی استفاده کردم.
-// کافیه import و نام‌ها را با آرایه‌های واقعی خودت جایگزین کنی.
 
 import {
   ShieldCheck,
@@ -24,31 +22,35 @@ import {
   RefreshCw,
   BadgeCheck,
 } from "lucide-react";
+
 export default function HomePage() {
-  const [cart, setCart] = useState<Product[]>([]);
+  // Seed with mock data (never undefined) so the first render never crashes,
+  // then replace with real data once/if the backend responds.
+  const [categories, setCategories] = useState<Category[]>(mockCategories);
+  const [newestProducts, setNewestProducts] = useState<Product[]>(mockProducts);
+  const [popularProducts, setPopularProducts] = useState<Product[]>(mockProducts);
+
+  // NOTE: سبد خرید دیگه اینجا state نداره — همه‌ی ProductCardها (این صفحه،
+  // AmazingOffers، صفحه‌ی سرچ، صفحه‌ی محصول) مستقیم به CartContext
+  // (context/CartContext.tsx) وصلن، پس سبد بین همه‌ی صفحات مشترکه.
+  // فقط "انتخاب برای علاقه‌مندی/wishlist" فعلاً همینجا لوکاله، چون
+  // WishlistContext هنوز پیاده نشده (قدم بعدی).
   const [selected, setSelected] = useState<Product | null>(null);
-  const handleAdd = (p: Product) => {
-    setCart((prev) => [...prev, p]);
-  };
-
-  const handleSelect = (p: Product) => {
+  const handleWishlist = (p: Product) => {
     setSelected(p);
-    // اینجا می‌تونی مثلاً به صفحه‌ی جزئیات محصول ناوبری کنی
   };
 
-  const handleSelectCategory = (catId: string) => {
-    console.log("selected category:", catId);
-    // اینجا می‌تونی فیلتر یا ناوبری به صفحه‌ی دسته‌بندی رو انجام بدی
-  };
+  useEffect(() => {
+    getCategoriesSafe().then(setCategories);
+    getProductsSafe({ page: 1, pageSize: 8 }).then(setNewestProducts);
+    getProductsSafe({ page: 1, pageSize: 8, categoryId: "popular" }).then(setPopularProducts);
+  }, []);
 
   return (
-
-    <main className="min-h-screen bg-[#E8EDF2]">
-      {/* Features strip */}
-
+    <main className="min-h-screen bg-[#F5F7FA]">
       <Hero />
 
-      <section className="mx-auto max-w-[1440px] px-4 py-6 md:px-6">
+      <section className="mx-auto max-w-[1600px] px-4 py-6 md:px-6">
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
           {[
             { icon: Truck, t: "ارسال سریع", d: "تهران همان‌روز" },
@@ -60,36 +62,36 @@ export default function HomePage() {
           ].map((f, i) => (
             <div
               key={i}
-              className="flex items-center gap-3 rounded-2xl border border-[#d8dee6] bg-white/80 px-3.5 py-3.5 shadow-[0_4px_14px_rgba(44,57,71,0.04)] backdrop-blur"
+              className="flex items-center gap-3 rounded-[16px] border border-[#E5E7EB] bg-white px-3.5 py-3.5"
+              style={{ boxShadow: "0 8px 30px rgba(0,0,0,.06)" }}
             >
-              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#E8EDF2] text-[#547A95]">
-                <f.icon size={18} />
+              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-[#EFF4FE] text-[#1D4ED8]">
+                <f.icon size={18} strokeWidth={2} />
               </div>
               <div>
-                <div className="text-[12.5px] font-extrabold text-[#2C3947]">
-                  {f.t}
-                </div>
-                <div className="text-[11px] text-[#8a96a3]">{f.d}</div>
+                <div className="text-[12.5px] font-extrabold text-[#111827]">{f.t}</div>
+                <div className="text-[11px] text-[#6B7280]">{f.d}</div>
               </div>
             </div>
           ))}
         </div>
       </section>
-      
-      <Categories onSelectCategory={handleSelectCategory} />
+
+      <Categories categories={categories} />
 
       <AdCarousel variant="products" />
 
-      <AmazingOffers onAdd={handleAdd} onSelect={handleSelect} />
+      {/* onAdd پاس داده نمی‌شه → ProductCard خودش از CartContext استفاده می‌کنه */}
+      <AmazingOffers onSelect={handleWishlist} />
 
       <ProductGrid
         id="newest"
         eyebrow="تازه‌ها"
         title="جدیدترین محصولات"
         subtitle="آخرین محصولات اضافه‌شده به فروشگاه"
-        products={amazingProducts}
-        onAdd={handleAdd}
-        onSelect={handleSelect}
+        products={newestProducts}
+        viewAllHref="/products?sort=newest"
+        onWishlist={handleWishlist}
       />
 
       <Brands />
@@ -101,9 +103,9 @@ export default function HomePage() {
         eyebrow="محبوب‌ها"
         title="پرفروش‌ترین محصولات"
         subtitle="محصولاتی که بیشترین استقبال رو داشتن"
-        products={amazingProducts}
-        onAdd={handleAdd}
-        onSelect={handleSelect}
+        products={popularProducts}
+        viewAllHref="/products?sort=popular"
+        onWishlist={handleWishlist}
       />
     </main>
   );

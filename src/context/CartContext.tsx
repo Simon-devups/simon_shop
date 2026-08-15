@@ -87,6 +87,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setHydrated(true);
   }, []);
 
+  // Cross-tab sync: if the cart changes in another tab (or another window),
+  // the `storage` event fires here with the new value. Without this, two
+  // open tabs would silently drift apart — add in tab A, tab B never knows.
+  // Note: `storage` only fires in OTHER tabs, never the one that made the
+  // change, so this never conflicts with our own writes below.
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== STORAGE_KEY) return;
+      setItems(loadFromStorage());
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   // Persist on every change, but only after the initial load finished —
   // otherwise the very first render (empty array) would overwrite storage.
   useEffect(() => {

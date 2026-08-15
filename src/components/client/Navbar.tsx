@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Heart, ChevronLeft, Search, ShoppingCart, User, Menu,
@@ -41,12 +42,20 @@ export function Navbar() {
     >
       <PromoRibbon />
       <div className="max-w-[1600px] mx-auto px-6 py-3 flex items-center gap-6">
-        <div className="text-2xl font-extrabold text-[#1D4ED8] shrink-0">فروشگاه</div>
+        <div
+          onClick={() => router.push("/")} 
+          className="text-2xl font-extrabold text-[#1D4ED8] shrink-0"
+        >
+          فروشگاه
+        </div>
 
-        <button className="hidden md:flex items-center gap-1.5 text-sm text-[#374151] border border-[#E5E7EB] rounded-[12px] px-3 py-2 hover:bg-[#F5F7FA] transition-colors duration-150 ease-out shrink-0">
+        <Link
+          href="/#categories"
+          className="hidden md:flex items-center gap-1.5 text-sm text-[#374151] border border-[#E5E7EB] rounded-[12px] px-3 py-2 hover:bg-[#F5F7FA] transition-colors duration-150 ease-out shrink-0"
+        >
           <Menu size={16} strokeWidth={2} />
           دسته‌بندی‌ها
-        </button>
+        </Link>
 
         <form onSubmit={submitSearch} className="flex-1 relative" role="search">
           <input

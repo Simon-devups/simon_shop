@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, FreeMode } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -30,8 +31,15 @@ const C = {
 const SHADOW_CARD = "0 8px 30px rgba(0,0,0,.06)";
 
 type Props = {
-  onAdd: (p: Product) => void;
+  /**
+   * اختیاریه — اگه ندی، ProductCard خودش مستقیم به CartContext وصل می‌شه.
+   * قبلاً این prop اجباری بود و HomePage یه state لوکال جدا (handleAdd)
+   * بهش می‌داد که باعث می‌شد سبد این بخش از بقیه‌ی سایت جدا بمونه.
+   */
+  onAdd?: (p: Product) => void;
   onSelect?: (p: Product) => void;
+  /** اختیاریه — تا وقتی صفحه‌ی مقصد نداریم، دکمه خودش رو مخفی می‌کنه به‌جای این‌که به یه لینک مرده اشاره کنه. */
+  viewAllHref?: string;
 };
 
 /* ------------------------------------------------------------------ */
@@ -72,7 +80,7 @@ function CountdownDigit({ value, label }: { value: number; label: string }) {
 /*  Section                                                             */
 /* ------------------------------------------------------------------ */
 
-export default function AmazingOffers({ onAdd, onSelect }: Props) {
+export default function AmazingOffers({ onAdd, onSelect, viewAllHref }: Props) {
   const { h, m, s } = useCountdown(9);
   const swiperRef = useRef<SwiperType | null>(null);
   const [atStart, setAtStart] = useState(true);
@@ -117,16 +125,18 @@ export default function AmazingOffers({ onAdd, onSelect }: Props) {
               </div>
             </div>
 
-            <button
-              type="button"
-              className="flex items-center gap-1.5 rounded-[12px] border px-4 py-2.5 text-[13px] font-semibold transition-colors duration-150 ease-out"
-              style={{ borderColor: C.border, color: C.primary, backgroundColor: C.primarySoft }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#E4ECFC")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = C.primarySoft)}
-            >
-              همه شگفت‌انگیزها
-              <ArrowLeft size={15} strokeWidth={2} />
-            </button>
+            {viewAllHref && (
+              <Link
+                href={viewAllHref}
+                className="flex items-center gap-1.5 rounded-[12px] border px-4 py-2.5 text-[13px] font-semibold transition-colors duration-150 ease-out"
+                style={{ borderColor: C.border, color: C.primary, backgroundColor: C.primarySoft }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#E4ECFC")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = C.primarySoft)}
+              >
+                همه شگفت‌انگیزها
+                <ArrowLeft size={15} strokeWidth={2} />
+              </Link>
+            )}
 
             {/* Carousel nav arrows — same button system as above */}
             <div className="flex items-center gap-1.5">
@@ -191,7 +201,7 @@ export default function AmazingOffers({ onAdd, onSelect }: Props) {
                   className="rounded-[16px] transition-shadow duration-200 ease-out hover:shadow-[0_18px_60px_rgba(0,0,0,.12)]"
                   style={{ boxShadow: SHADOW_CARD }}
                 >
-                  <ProductCard product={p} variant="amazing" onAdd={onAdd} onSelect={onSelect} />
+                  <ProductCard product={p} onAdd={onAdd} onWishlist={onSelect} />
                 </div>
               </SwiperSlide>
             ))}

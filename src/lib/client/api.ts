@@ -1,4 +1,4 @@
-// lib/api.ts
+// lib/client/api.ts
 // -----------------------------------------------------------------------------
 // Typed fetch layer for the home page (categories + products) and search page.
 // If the project already has a `types.ts`, move the types below there and
@@ -195,4 +195,49 @@ export async function getSearchResults(filters: SearchFilters): Promise<SearchRe
   }
 
   return res.json() as Promise<SearchResponse>;
+}
+
+/* ------------------------------------------------------------------ */
+/*  "Safe" wrappers — used by page.tsx (HomePage). Try the real        */
+/*  backend; on any failure (not up yet, network error, bad shape)     */
+/*  fall back to the mock data in data/store.ts instead of throwing,   */
+/*  so the page never crashes on `.map` over undefined.                */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Input: none.
+ * Output: Promise<Category[]> — never rejects; falls back to mock categories.
+ */
+export async function getCategoriesSafe(): Promise<Category[]> {
+  try {
+    const data = await getCategories();
+    if (Array.isArray(data) && data.length > 0) return data;
+    throw new Error("empty categories response");
+  } catch {
+    const { categories } = await import("../../data/store");
+    return categories;
+  }
+}
+
+/**
+ * Input: same as getProducts.
+ * Output: Promise<Product[]> — never rejects; falls back to mock products.
+ * (Real getProducts returns { products, total, page, pageSize }; this
+ * wrapper unwraps it to just the array, which is all page.tsx needs.)
+ */
+export async function getProductsSafe(params: {
+  categoryId?: string;
+  page?: number;
+  pageSize?: number;
+} = {}): Promise<Product[]> {
+  try {
+    const data = await getProducts(params);
+    if (Array.isArray(data.products) && data.products.length > 0) {
+      return data.products;
+    }
+    throw new Error("empty products response");
+  } catch {
+    const { amazingProducts } = await import("../../data/store");
+    return amazingProducts;
+  }
 }

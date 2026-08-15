@@ -8,6 +8,7 @@ import {
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { getSearchResults, type SearchProduct } from "@/lib/client/api";
+import { useCart } from "@/context/CartContext";
 
 /* ------------------------------------------------------------------ */
 /*  DESIGN TOKENS — same values used across Navbar / ProductPage /     */
@@ -248,14 +249,33 @@ function FiltersPanel({
 /*  ProductCard (radius/shadow/spacing/colors identical).              */
 /* ------------------------------------------------------------------ */
 
-function ResultCard({ product, onAdd }: { product: SearchProduct; onAdd?: (product: SearchProduct) => void }) {
+/**
+ * SearchProduct (شکل داده‌ی صفحه‌ی سرچ) با Product (شکلی که CartContext/
+ * ProductCard ازش استفاده می‌کنن) فرق داره — category اینجا رشته‌ست نه آبجکت،
+ * و slug نداره. این تابع فقط تطبیقشون می‌ده، بدون تغییر در خود CartContext.
+ */
+function toCartProduct(sp: SearchProduct) {
+  return {
+    id: sp.id,
+    slug: sp.id, // SearchProduct هنوز slug نداره؛ تا وقتی /api/search اضافه‌ش کنه، id به‌عنوان fallback
+    name: sp.name,
+    price: sp.price,
+    oldPrice: sp.oldPrice,
+    rating: sp.rating,
+    image: sp.image,
+    category: { id: sp.category, slug: sp.category, name: sp.category },
+  };
+}
+
+function ResultCard({ product }: { product: SearchProduct }) {
+  const { add } = useCart();
   const [wish, setWish] = useState(false);
   const [added, setAdded] = useState(false);
 
   const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    onAdd?.(product);
+    add(toCartProduct(product));
     setAdded(true);
     setTimeout(() => setAdded(false), 1200);
   };
@@ -608,11 +628,6 @@ function SearchResults() {
 
   const results = apiResults ?? paginatedMock;
 
-  const [cart, setCart] = useState<SearchProduct[]>([]);
-  const handleAdd = (product: SearchProduct) => {
-    setCart((prev) => [...prev, product]);
-  };
-
   const resultsTopRef = useRef<HTMLDivElement | null>(null);
   const goToPage = (p: number) => {
     setPage(p);
@@ -690,7 +705,7 @@ function SearchResults() {
               <>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
                   {results.map((p) => (
-                    <ResultCard key={p.id} product={p} onAdd={handleAdd} />
+                    <ResultCard key={p.id} product={p} />
                   ))}
                 </div>
                 <Pagination page={page} total={totalPages} onChange={goToPage} />
