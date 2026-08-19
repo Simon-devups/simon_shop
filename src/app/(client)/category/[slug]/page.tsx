@@ -1,21 +1,16 @@
-"use client";
-
 // app/(client)/category/[slug]/page.tsx
 // -----------------------------------------------------------------------------
-// Categories.tsx already links here (`/category/${c.slug}`), but the page
-// never existed — every category click was a 404. This wires it to the same
-// getCategoriesSafe/getProductsSafe helpers the home page uses, so it works
-// with mock data today and switches to the real backend automatically once
-// /api/categories and /api/products are live (no changes needed here).
+// Server Component. Category + products are fetched directly via
+// lib/server/store (no HTTP, no useEffect). Pagination is driven by the URL
+// (?page=2) instead of client state, so it's shareable/bookmarkable and
+// works without JavaScript.
 // -----------------------------------------------------------------------------
 
-import { useEffect, useMemo, useState } from "react";
-import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, PackageSearch } from "lucide-react";
-import type { Category, Product } from "@/lib/client/api";
-import { getCategoriesSafe, getProductsSafe } from "@/lib/client/api";
+import { getCategoryBySlug, getProducts } from "@/lib/server/store";
 import { ProductCard } from "@/features/Client/product/components/ProductCard";
+import type { Category } from "@/lib/client/api";
 
 const PAGE_SIZE = 12;
 
@@ -43,7 +38,7 @@ function CategoryHeader({ category }: { category: Category | null }) {
             {category?.name ?? "دسته‌بندی"}
           </h1>
           <p className="mt-0.5 text-[12.5px] text-[#6B7280]">
-            {category ? `${category.count.toLocaleString("fa-IR")}+ کالا در این دسته` : "در حال بارگذاری…"}
+            {category ? `${category.count.toLocaleString("fa-IR")}+ کالا در این دسته` : "این دسته پیدا نشد"}
           </p>
         </div>
       </div>
@@ -71,25 +66,14 @@ function EmptyState() {
   );
 }
 
-function GridSkeleton() {
-  return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="aspect-[4/3] animate-pulse rounded-[16px] bg-[#E5E7EB]" />
-      ))}
-    </div>
-  );
-}
-
-function Pagination({ page, totalPages, onChange }: { page: number; totalPages: number; onChange: (p: number) => void }) {
+function Pagination({ slug, page, totalPages }: { slug: string; page: number; totalPages: number }) {
   if (totalPages <= 1) return null;
   return (
     <div className="mt-8 flex items-center justify-center gap-2">
       {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-        <button
+        <Link
           key={p}
-          type="button"
-          onClick={() => onChange(p)}
+          href={`/category/${slug}?page=${p}`}
           className="grid h-9 w-9 place-items-center rounded-[8px] text-[13px] font-semibold transition-colors duration-150 ease-out"
           style={{
             background: p === page ? "#1D4ED8" : "transparent",
@@ -97,65 +81,33 @@ function Pagination({ page, totalPages, onChange }: { page: number; totalPages: 
           }}
         >
           {p.toLocaleString("fa-IR")}
-        </button>
+        </Link>
       ))}
     </div>
   );
 }
 
-export default function CategoryPage() {
-  const params = useParams<{ slug: string }>();
-  const slug = params?.slug ?? "";
+export default function CategoryPage({
+  params,
+  searchParams,
+}: {
+  params: { slug: string };
+  searchParams: { page?: string };
+}) {
+  const slug = params.slug;
+  const page = Number(searchParams.page ?? "1") || 1;
 
-  const [category, setCategory] = useState<Category | null>(null);
-  const [products, setProducts] = useState<Product[] | null>(null); // null = هنوز لود نشده
-  const [page, setPage] = useState(1);
-
-  // Category info (name/icon/count) — از همون لیست دسته‌بندی‌های صفحه‌ی اصلی
-  // فیلتر می‌کنیم تا یه endpoint جدا (/api/categories/:slug) لازم نداشته باشیم
-  // مگر این‌که بعداً بخوایم breadcrumb یا فیلتر برند مخصوص دسته اضافه کنیم.
-  useEffect(() => {
-    let cancelled = false;
-    getCategoriesSafe().then((all) => {
-      if (cancelled) return;
-      setCategory(all.find((c) => c.slug === slug) ?? null);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [slug]);
-
-  // Products for this category + page
-  useEffect(() => {
-    let cancelled = false;
-    setProducts(null);
-    getProductsSafe({ categoryId: slug, page, pageSize: PAGE_SIZE }).then((data) => {
-      if (!cancelled) setProducts(data);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [slug, page]);
-
-  // Reset to page 1 whenever the category itself changes (new slug)
-  useEffect(() => {
-    setPage(1);
-  }, [slug]);
-
-  const totalPages = useMemo(() => {
-    if (!category?.count) return 1;
-    return Math.max(1, Math.ceil(category.count / PAGE_SIZE));
-  }, [category]);
+  const category = getCategoryBySlug(slug);
+  const { products, total } = getProducts({ categoryId: slug, page, pageSize: PAGE_SIZE });
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div dir="rtl" className="min-h-screen bg-[#F5F7FA]">
-      <Breadcrumb categoryName={category?.name ?? "..."} />
+      <Breadcrumb categoryName={category?.name ?? "دسته‌بندی"} />
       <CategoryHeader category={category} />
 
       <main className="mx-auto max-w-[1600px] px-6 py-6">
-        {products === null ? (
-          <GridSkeleton />
-        ) : products.length === 0 ? (
+        {products.length === 0 ? (
           <EmptyState />
         ) : (
           <>
@@ -164,7 +116,7 @@ export default function CategoryPage() {
                 <ProductCard key={p.id} product={p} />
               ))}
             </div>
-            <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+            <Pagination slug={slug} page={page} totalPages={totalPages} />
           </>
         )}
       </main>
