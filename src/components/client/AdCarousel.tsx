@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef } from "react";
 import { ArrowLeft } from "lucide-react";
 import { adBanners, phoneAds, formatPrice } from "../../data/store";
@@ -11,7 +13,6 @@ export default function AdCarousel({ variant = "products" }: Props) {
   const isPhone = variant === "phones";
   const items = isPhone ? phoneAds : adBanners;
 
-  // Duplicate for seamless loop
   const loop = [...items, ...items];
 
   useEffect(() => {
@@ -39,7 +40,6 @@ export default function AdCarousel({ variant = "products" }: Props) {
       </div>
 
       <div className="relative overflow-hidden rounded-[24px]">
-        {/* edge fades */}
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#E8EDF2] to-transparent" />
         <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#E8EDF2] to-transparent" />
 

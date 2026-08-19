@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import Link from "next/link";
 import { Check, Heart, Plus, Star } from "lucide-react";
@@ -35,7 +37,6 @@ export function ProductCard({ product, onAdd, onWishlist }: Props) {
       className="group relative flex h-full flex-col overflow-hidden rounded-[16px] border border-[#E5E7EB] bg-white transition-shadow duration-200 ease-out hover:shadow-[0_18px_60px_rgba(0,0,0,0.12)]"
       style={{ boxShadow: "0 8px 30px rgba(0,0,0,.06)" }}
     >
-      {/* Media */}
       <div className="relative aspect-[4/3] overflow-hidden bg-[#F5F7FA]">
         <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
 
@@ -45,7 +46,6 @@ export function ProductCard({ product, onAdd, onWishlist }: Props) {
           </span>
         ) : null}
 
-        {/* Wishlist */}
         <button
           type="button"
           onClick={(e) => {
@@ -60,7 +60,6 @@ export function ProductCard({ product, onAdd, onWishlist }: Props) {
         </button>
       </div>
 
-      {/* Body */}
       <div className="flex flex-1 flex-col p-[20px]">
         <div className="mb-2 text-[12px] font-medium text-[#6B7280]">
           {product.category.name}
@@ -70,7 +69,6 @@ export function ProductCard({ product, onAdd, onWishlist }: Props) {
           {product.name}
         </h3>
 
-        {/* Rating */}
         <div className="mb-4 flex items-center gap-1.5">
           <Star size={16} strokeWidth={2} className="fill-[#F59E0B] text-[#F59E0B]" />
           <span className="text-[12px] font-semibold text-[#111827]">
@@ -78,7 +76,6 @@ export function ProductCard({ product, onAdd, onWishlist }: Props) {
           </span>
         </div>
 
-        {/* Footer */}
         <div className="mt-auto flex items-center justify-between gap-2">
           <span className="text-[16px] font-bold tracking-tight text-[#111827]">
             {product.price.toLocaleString("fa-IR")} تومان

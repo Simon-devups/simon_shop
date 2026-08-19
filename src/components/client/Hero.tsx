@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { heroSlides } from "../../data/store";
@@ -22,7 +24,6 @@ export default function Hero() {
         className="relative overflow-hidden rounded-[28px] border border-white/60 shadow-[0_20px_60px_rgba(44,57,71,0.08)]"
         style={{ background: slide.bg, minHeight: 420 }}
       >
-        {/* Decorative blobs */}
         <div
           className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full opacity-40 blur-3xl"
           style={{ background: slide.dark ? "rgba(194,165,109,0.25)" : "rgba(84,122,149,0.2)" }}
@@ -33,7 +34,6 @@ export default function Hero() {
         />
 
         <div className="relative grid items-center gap-6 p-6 md:grid-cols-2 md:gap-10 md:p-12 lg:p-14">
-          {/* Text */}
           <div className={`order-2 fade-up md:order-1 ${slide.dark ? "text-white" : "text-[#2C3947]"}`}>
             <div className="mb-4 inline-flex items-center gap-2">
               <span
@@ -90,7 +90,6 @@ export default function Hero() {
               </button>
             </div>
 
-            {/* Trust row */}
             <div
               className={`mt-10 flex flex-wrap gap-6 text-[12.5px] font-semibold ${
                 slide.dark ? "text-white/65" : "text-[#6b7a88]"
@@ -111,7 +110,6 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Product image — clean, no floating sales/rating boxes */}
           <div className="order-1 relative flex items-center justify-center md:order-2">
             <div
               className="absolute h-[280px] w-[280px] rounded-full blur-2xl md:h-[340px] md:w-[340px]"
@@ -138,7 +136,6 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Controls */}
         <div className="absolute bottom-5 left-5 flex items-center gap-2 md:bottom-8 md:left-8">
           <button
             type="button"
@@ -166,7 +163,6 @@ export default function Hero() {
           </button>
         </div>
 
-        {/* Dots */}
         <div className="absolute bottom-6 right-1/2 flex translate-x-1/2 gap-2 md:bottom-8">
           {heroSlides.map((s, i) => (
             <button

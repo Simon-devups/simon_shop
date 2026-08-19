@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -9,10 +11,6 @@ import { ProductCard } from "@/features/Client/product/components/ProductCard";
 
 import "swiper/css";
 import "swiper/css/free-mode";
-
-/* ------------------------------------------------------------------ */
-/*  DESIGN TOKENS — pulled from the shared design system               */
-/* ------------------------------------------------------------------ */
 
 const C = {
   bg: "#F5F7FA",
@@ -31,20 +29,10 @@ const C = {
 const SHADOW_CARD = "0 8px 30px rgba(0,0,0,.06)";
 
 type Props = {
-  /**
-   * اختیاریه — اگه ندی، ProductCard خودش مستقیم به CartContext وصل می‌شه.
-   * قبلاً این prop اجباری بود و HomePage یه state لوکال جدا (handleAdd)
-   * بهش می‌داد که باعث می‌شد سبد این بخش از بقیه‌ی سایت جدا بمونه.
-   */
   onAdd?: (p: Product) => void;
   onSelect?: (p: Product) => void;
-  /** اختیاریه — تا وقتی صفحه‌ی مقصد نداریم، دکمه خودش رو مخفی می‌کنه به‌جای این‌که به یه لینک مرده اشاره کنه. */
   viewAllHref?: string;
 };
-
-/* ------------------------------------------------------------------ */
-/*  Countdown hook                                                     */
-/* ------------------------------------------------------------------ */
 
 function useCountdown(hours = 8) {
   const [left, setLeft] = useState(hours * 3600);
@@ -76,10 +64,6 @@ function CountdownDigit({ value, label }: { value: number; label: string }) {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  Section                                                             */
-/* ------------------------------------------------------------------ */
-
 export default function AmazingOffers({ onAdd, onSelect, viewAllHref }: Props) {
   const { h, m, s } = useCountdown(9);
   const swiperRef = useRef<SwiperType | null>(null);
@@ -92,7 +76,6 @@ export default function AmazingOffers({ onAdd, onSelect, viewAllHref }: Props) {
         className="overflow-hidden rounded-[20px] border p-5 md:p-8"
         style={{ backgroundColor: C.surface, borderColor: C.border, boxShadow: SHADOW_CARD }}
       >
-        {/* Header */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div
@@ -138,7 +121,6 @@ export default function AmazingOffers({ onAdd, onSelect, viewAllHref }: Props) {
               </Link>
             )}
 
-            {/* Carousel nav arrows — same button system as above */}
             <div className="flex items-center gap-1.5">
               <button
                 type="button"
@@ -170,7 +152,6 @@ export default function AmazingOffers({ onAdd, onSelect, viewAllHref }: Props) {
 
         <div className="h-px w-full" style={{ backgroundColor: C.divider }} />
 
-        {/* Product carousel */}
         <div className="mt-6">
           <Swiper
             modules={[Navigation, FreeMode]}

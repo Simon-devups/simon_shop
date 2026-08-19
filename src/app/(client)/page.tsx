@@ -1,11 +1,12 @@
-"use client";
-import { useEffect, useState } from "react";
-import type { Product, Category } from "@/lib/client/api";
-import { getCategoriesSafe, getProductsSafe } from "@/lib/client/api";
-import {
-  categories as mockCategories,
-  amazingProducts as mockProducts,
-} from "../../data/store";
+// app/(client)/page.tsx
+// -----------------------------------------------------------------------------
+// Server Component — no "use client" here. Data is fetched directly (in-process,
+// no HTTP round-trip) via lib/server/store, then passed down as props to the
+// interactive client components below. This removes the mock→real data flash
+// that the old useEffect-based version had.
+// -----------------------------------------------------------------------------
+
+import { getCategories, getProducts } from "@/lib/server/store";
 
 import AdCarousel from "@/components/client/AdCarousel";
 import Brands from "@/components/client/Brands";
@@ -24,27 +25,9 @@ import {
 } from "lucide-react";
 
 export default function HomePage() {
-  // Seed with mock data (never undefined) so the first render never crashes,
-  // then replace with real data once/if the backend responds.
-  const [categories, setCategories] = useState<Category[]>(mockCategories);
-  const [newestProducts, setNewestProducts] = useState<Product[]>(mockProducts);
-  const [popularProducts, setPopularProducts] = useState<Product[]>(mockProducts);
-
-  // NOTE: سبد خرید دیگه اینجا state نداره — همه‌ی ProductCardها (این صفحه،
-  // AmazingOffers، صفحه‌ی سرچ، صفحه‌ی محصول) مستقیم به CartContext
-  // (context/CartContext.tsx) وصلن، پس سبد بین همه‌ی صفحات مشترکه.
-  // فقط "انتخاب برای علاقه‌مندی/wishlist" فعلاً همینجا لوکاله، چون
-  // WishlistContext هنوز پیاده نشده (قدم بعدی).
-  const [selected, setSelected] = useState<Product | null>(null);
-  const handleWishlist = (p: Product) => {
-    setSelected(p);
-  };
-
-  useEffect(() => {
-    getCategoriesSafe().then(setCategories);
-    getProductsSafe({ page: 1, pageSize: 8 }).then(setNewestProducts);
-    getProductsSafe({ page: 1, pageSize: 8, categoryId: "popular" }).then(setPopularProducts);
-  }, []);
+  const categories = getCategories();
+  const { products: newestProducts } = getProducts({ page: 1, pageSize: 8, sort: "newest" });
+  const { products: popularProducts } = getProducts({ page: 1, pageSize: 8, sort: "popular" });
 
   return (
     <main className="min-h-screen bg-[#F5F7FA]">
@@ -82,7 +65,7 @@ export default function HomePage() {
       <AdCarousel variant="products" />
 
       {/* onAdd پاس داده نمی‌شه → ProductCard خودش از CartContext استفاده می‌کنه */}
-      <AmazingOffers onSelect={handleWishlist} />
+      <AmazingOffers viewAllHref="/products?sort=popular" />
 
       <ProductGrid
         id="newest"
@@ -91,7 +74,6 @@ export default function HomePage() {
         subtitle="آخرین محصولات اضافه‌شده به فروشگاه"
         products={newestProducts}
         viewAllHref="/products?sort=newest"
-        onWishlist={handleWishlist}
       />
 
       <Brands />
@@ -105,7 +87,6 @@ export default function HomePage() {
         subtitle="محصولاتی که بیشترین استقبال رو داشتن"
         products={popularProducts}
         viewAllHref="/products?sort=popular"
-        onWishlist={handleWishlist}
       />
     </main>
   );

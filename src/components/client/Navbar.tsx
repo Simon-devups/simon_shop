@@ -15,8 +15,6 @@ export function Navbar() {
   const searchParams = useSearchParams();
   const { count } = useCart();
 
-  // Keep the input in sync with the URL: typing "q" in the address bar,
-  // navigating back, or landing on /search?q=... all reflect in the box.
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
   useEffect(() => {
     setQuery(searchParams.get("q") ?? "");
@@ -42,12 +40,9 @@ export function Navbar() {
     >
       <PromoRibbon />
       <div className="max-w-[1600px] mx-auto px-6 py-3 flex items-center gap-6">
-        <div
-          onClick={() => router.push("/")} 
-          className="text-2xl font-extrabold text-[#1D4ED8] shrink-0"
-        >
+        <Link href="/" className="text-2xl font-extrabold text-[#1D4ED8] shrink-0">
           فروشگاه
-        </div>
+        </Link>
 
         <Link
           href="/#categories"
@@ -75,10 +70,13 @@ export function Navbar() {
         </form>
 
         <div className="flex items-center gap-1 shrink-0">
-          <button className="flex flex-col items-center gap-0.5 px-3 py-1 rounded-[12px] hover:bg-[#F5F7FA] transition-colors duration-150 ease-out text-[#374151]">
+          <Link
+            href="/profile"
+            className="flex flex-col items-center gap-0.5 px-3 py-1 rounded-[12px] hover:bg-[#F5F7FA] transition-colors duration-150 ease-out text-[#374151]"
+          >
             <User size={19} strokeWidth={2} />
             <span className="text-[11px]">حساب من</span>
-          </button>
+          </Link>
           <button className="flex flex-col items-center gap-0.5 px-3 py-1 rounded-[12px] hover:bg-[#F5F7FA] transition-colors duration-150 ease-out text-[#374151]">
             <Heart size={19} strokeWidth={2} />
             <span className="text-[11px]">علاقه‌مندی</span>

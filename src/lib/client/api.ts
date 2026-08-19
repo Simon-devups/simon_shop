@@ -1,8 +1,10 @@
 // lib/client/api.ts
 // -----------------------------------------------------------------------------
 // Typed fetch layer for the home page (categories + products) and search page.
-// If the project already has a `types.ts`, move the types below there and
-// `import type { ... } from "@/types"` here instead of redeclaring them.
+// These functions hit THIS SAME Next.js app's own Route Handlers
+// (app/api/categories/route.ts, app/api/products/route.ts, app/api/search/route.ts) —
+// i.e. this app is its own backend. When a separate backend service exists,
+// only API_BASE_URL needs to change.
 // -----------------------------------------------------------------------------
 
 /** A single product category shown in the "دسته‌بندی‌ها" strip. */
@@ -47,6 +49,11 @@ export type HomePageData = {
 /** A single product card's data shape used specifically on the search results page. */
 export type SearchProduct = {
   id: string;
+  /**
+   * حالا Route Handler واقعی (app/api/search/route.ts) این فیلد رو پر می‌کنه —
+   * دیگه لازم نیست fallback به id بزنیم، ولی برای ایمنی همچنان اختیاریه.
+   */
+  slug?: string;
   name: string;
   category: string;
   brand: string;
@@ -95,13 +102,11 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
  */
 export async function getHomePageData(): Promise<HomePageData> {
   const res = await fetch(`${API_BASE_URL}/api/home`, {
-    next: { revalidate: 60 }, // ISR: refresh every 60s
+    next: { revalidate: 60 },
   });
-
   if (!res.ok) {
     throw new Error(`getHomePageData failed: ${res.status} ${res.statusText}`);
   }
-
   return res.json() as Promise<HomePageData>;
 }
 
@@ -114,11 +119,9 @@ export async function getCategories(): Promise<Category[]> {
   const res = await fetch(`${API_BASE_URL}/api/categories`, {
     next: { revalidate: 300 },
   });
-
   if (!res.ok) {
     throw new Error(`getCategories failed: ${res.status} ${res.statusText}`);
   }
-
   return res.json() as Promise<Category[]>;
 }
 
@@ -131,31 +134,28 @@ export async function getProducts(params: {
   categoryId?: string;
   page?: number;
   pageSize?: number;
+  sort?: "newest" | "popular" | "cheapest" | "expensive";
 }): Promise<{ products: Product[]; total: number; page: number; pageSize: number }> {
-  const { categoryId, page = 1, pageSize = 8 } = params;
+  const { categoryId, page = 1, pageSize = 8, sort } = params;
 
   const query = new URLSearchParams({
     page: String(page),
     pageSize: String(pageSize),
     ...(categoryId ? { categoryId } : {}),
+    ...(sort ? { sort } : {}),
   });
 
   const res = await fetch(`${API_BASE_URL}/api/products?${query.toString()}`, {
     next: { revalidate: 60 },
   });
-
   if (!res.ok) {
     throw new Error(`getProducts failed: ${res.status} ${res.statusText}`);
   }
-
   return res.json();
 }
 
 /**
  * Fetches search results with filters, sorting, and pagination.
- * Used by the /search page. Backend should support all SearchFilters fields
- * as query params (arrays as repeated params or comma-joined — adjust to match
- * whatever the real API expects).
  * Input: SearchFilters.
  * Output: Promise<SearchResponse>.
  */
@@ -186,28 +186,21 @@ export async function getSearchResults(filters: SearchFilters): Promise<SearchRe
   if (minRating !== undefined) params.set("minRating", String(minRating));
 
   const res = await fetch(`${API_BASE_URL}/api/search?${params.toString()}`, {
-    // Search results shouldn't be cached across different filter combos.
     cache: "no-store",
   });
-
   if (!res.ok) {
     throw new Error(`getSearchResults failed: ${res.status} ${res.statusText}`);
   }
-
   return res.json() as Promise<SearchResponse>;
 }
 
 /* ------------------------------------------------------------------ */
-/*  "Safe" wrappers — used by page.tsx (HomePage). Try the real        */
-/*  backend; on any failure (not up yet, network error, bad shape)     */
-/*  fall back to the mock data in data/store.ts instead of throwing,   */
-/*  so the page never crashes on `.map` over undefined.                */
+/*  "Safe" wrappers — used by client components that can't risk a      */
+/*  crash if the network hiccups. Try the real backend (now that the   */
+/*  Route Handlers actually exist, this succeeds); on any failure fall */
+/*  back to the mock data in data/store.ts instead of throwing.        */
 /* ------------------------------------------------------------------ */
 
-/**
- * Input: none.
- * Output: Promise<Category[]> — never rejects; falls back to mock categories.
- */
 export async function getCategoriesSafe(): Promise<Category[]> {
   try {
     const data = await getCategories();
@@ -219,16 +212,11 @@ export async function getCategoriesSafe(): Promise<Category[]> {
   }
 }
 
-/**
- * Input: same as getProducts.
- * Output: Promise<Product[]> — never rejects; falls back to mock products.
- * (Real getProducts returns { products, total, page, pageSize }; this
- * wrapper unwraps it to just the array, which is all page.tsx needs.)
- */
 export async function getProductsSafe(params: {
   categoryId?: string;
   page?: number;
   pageSize?: number;
+  sort?: "newest" | "popular" | "cheapest" | "expensive";
 } = {}): Promise<Product[]> {
   try {
     const data = await getProducts(params);
